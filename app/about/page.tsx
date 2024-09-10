@@ -85,6 +85,7 @@ export default function About() {
 			/>
 			<Navigation />
 			<div className="container mx-auto px-4 py-40">
+
 				<Card className="max-w-5xl mb-8">
 					<div className="flex flex-col md:flex-row items-center md:items-start p-4 md:p-6">
 						<div className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 relative mb-4 md:mb-0 md:mr-6 flex-shrink-0">
@@ -97,10 +98,10 @@ export default function About() {
 							/>
 						</div>
 						<div className="flex-1 text-center md:text-left">
-							<h2 className="text-sm text-zinc-100 mb-2">
+							<h2 className="text-xl text-zinc-100 mb-2">
 								James Avery Coppock, PhD
 							</h2>
-							<p className="text-zinc-300 mb-3 text-xs sm:text-sm">
+							<p className="text-zinc-300 mb-3 text-xs sm:text-xs">
 								Hello! I'm James, a Senior Machine Learning Engineer @{" "}
 								<Link
 									target="_blank"
@@ -111,7 +112,7 @@ export default function About() {
 								</Link>
 								. Prior to joining AH, I received my PhD in Biomedical Engineering from Duke University, where my research focused on developing physics-based computer vision models for dynamic medical image analysis.
 							</p>
-							<p className="text-zinc-300 text-xs sm:text-sm mb-4">
+							<p className="text-zinc-300 text-xs sm:text-xs+ mb-4">
 								My passion lies in developing innovative AI solutions that can make a real difference in people's lives. When I'm not coding or diving into data, you can find me exploring the latest advancements in AI or contributing to open-source projects.
 							</p>
 							<div className="mt-4 overflow-x-auto">
@@ -131,6 +132,7 @@ export default function About() {
 						</div>
 					</div>
 				</Card>
+
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto auto-rows-auto">
 					<Card className="col-span-1 md:col-span-2 lg:col-span-3">

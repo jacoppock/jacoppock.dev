@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: "jacoppock.dev",
     images: [
       {
-        url: "https://jacoppock.dev/og.png",
+        url: "https://jacoppock.dev/booga.jpg",
         width: 1920,
         height: 1080,
       },

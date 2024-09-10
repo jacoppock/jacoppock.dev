@@ -110,7 +110,10 @@ export default function About() {
 								>
 									Automated Health
 								</Link>
-								. Prior to joining AH, I received my PhD in Biomedical Engineering from Duke University, where my research focused on developing physics-based computer vision models for dynamic medical image analysis.
+								.
+							</p>
+							<p className="text-zinc-300 text-xs sm:text-xs+ mb-4">
+								Prior to joining AH, I received my PhD in Biomedical Engineering from Duke University, where my research focused on developing physics-based computer vision models for dynamic medical image analysis.
 							</p>
 							<p className="text-zinc-300 text-xs sm:text-xs+ mb-4">
 								My passion lies in developing innovative AI solutions that can make a real difference in people's lives. When I'm not coding or diving into data, you can find me exploring the latest advancements in AI or contributing to open-source projects.

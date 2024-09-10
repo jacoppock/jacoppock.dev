@@ -86,7 +86,7 @@ export default function About() {
 			<Navigation />
 			<div className="container mx-auto px-4 py-40">
 				<Card className="max-w-5xl mb-8">
-					<div className="flex flex-col md:flex-row items-center md:items-start">
+					<div className="flex flex-col md:flex-row items-center md:items-start p-4 md:p-6">
 						<div className="w-24 h-24 md:w-32 md:h-32 lg:w-48 lg:h-48 relative mb-4 md:mb-0 md:mr-6 flex-shrink-0">
 							<Image
 								src="/headshot.png"

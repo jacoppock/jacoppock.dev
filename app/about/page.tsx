@@ -22,36 +22,24 @@ export default function About() {
 
 	const currentRole = {
 		title: "Senior Machine Learning Engineer",
-		company: "Automated Health",
-		period: "October 2024 - ",
+		company: "Bionic Health",
+		period: "October 2023 - ",
 		details: [
-			"Building the world's first AI-Native Electronic Health Record (EHR)",
-			"Our goal is to leverage AI to make care more personalized and accessible, while reducing the cognitive load on clinicians",
-
+			"Developing data-driven solutions for healthcare providers and patients alike",
+			"Our goal is to leverage AI to make healthcare more personalized and accessible, while reducing the cognitive load on clinicians",
 		]
 	};
 
 	const experiences = [
-		{
-			id: "bionic",
-			title: "Principal Data Scientist",
-			company: "Bionic Health",
-			period: "October 2023 - October 2024",
-			details: [
-				"Developed automated method for ingesting and analyzing multi-modal data to predict patient-specific disease risk profiles",
-				"Developed FHIR-native generative AI framework to support clinical decision making",
-				"Developed chat-bot service for patient onboarding and lifestyle recommendations"
-			]
-		},
 		{
 			id: "duke",
 			title: "ML Research Scientist - Medical Imaging",
 			company: "Duke University",
 			period: "January 2020 - September 2023",
 			details: [
-				"Developed physics-based deep learning strategies for medical imaging",
-				"Validated novel deep-learning-based image registration algorithm",
-				"Assisted in management of NIH funded grants"
+				"Developed deep-learning-based strategies for automatically extracting digital biomarkers of tissue structure, compostion and function from medical imaging modalities (e.g., MRI)",
+				"Created and validated a suite of novel deep-learning-based image registration algorithms",
+				"Assisted in management of NIH-funded grants, "
 			]
 		},
 		{
@@ -61,8 +49,7 @@ export default function About() {
 			period: "October 2017 - October 2018",
 			details: [
 				"Developed deep-learning algorithms for heart rate and blood pressure prediction",
-				"Created data visualization dashboards",
-				"Developed scalable data pipelines"
+				"Conducted Real-World-Data studies to validate the clinical utility of Valencell's technology"
 			]
 		},
 		{
@@ -71,8 +58,8 @@ export default function About() {
 			company: "Wilson Sporting Goods",
 			period: "April 2017 - August 2017",
 			details: [
-				"Developed algorithms for tracking sports statistics using IMUs",
-				"Created classification algorithm for sport-specific event-detection"
+				"Developed algorithms for real-time tracking and analysis of statistics using IMUs embedded in Wilson sporting goods",
+				"Partnered with NFL teams to develop and deploy new ball-tracking technologies analyzing player performance"
 			]
 		}
 	];
@@ -105,7 +92,7 @@ export default function About() {
 								Hello! I'm James, a Senior Machine Learning Engineer @{" "}
 								<Link
 									target="_blank"
-									href="https://automated.co"
+									href="https://bionichealth.com"
 									className="underline duration-500 hover:text-zinc-300"
 								>
 									Automated Health
@@ -113,10 +100,10 @@ export default function About() {
 								.
 							</p>
 							<p className="text-zinc-300 text-xs sm:text-xs+ mb-4">
-								Prior to joining AH, I received my PhD in Biomedical Engineering from Duke University, where my research focused on developing physics-based computer vision models for dynamic medical image analysis.
+								Prior to joining Bionic, I received my PhD in Biomedical Engineering from Duke University, where my research focused on developing physics-based computer vision models for dynamic medical image analysis.
 							</p>
 							<p className="text-zinc-300 text-xs sm:text-xs+ mb-4">
-								My passion lies in developing innovative AI solutions that can make a real difference in people's lives. When I'm not coding or diving into data, you can find me exploring the latest advancements in AI or contributing to open-source projects.
+								My passion lies in developing innovative AI-backed solutions that can make a real difference in people's lives. When I'm not coding or diving into data, you can find me exploring the latest advancements in AI or contributing to open-source projects.
 							</p>
 							<div className="mt-4 overflow-x-auto">
 								<GitHubCalendar

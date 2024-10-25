@@ -65,10 +65,10 @@ export default function About() {
 	];
 
 	return (
-		<div className="relative bg-gradient-to-tl from-zinc-900 via-zinc-900 to-zinc-900/0">
+		<div className="relative bg-gradient-to-tl from-zinc-900/0 via-zinc-900/1 to-zinc-900/0">
 			<Particles
 				className="absolute inset-0 -z-10 animate-fade-in"
-				quantity={100}
+				quantity={300}
 			/>
 			<Navigation />
 			<div className="container mx-auto px-4 py-40">

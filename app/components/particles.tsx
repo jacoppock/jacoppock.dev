@@ -14,7 +14,7 @@ interface ParticlesProps {
 export default function Particles({
 	className = "",
 	quantity = 30,
-	staticity = 50,
+	staticity = 100,
 	ease = 50,
 	refresh = false,
 }: ParticlesProps) {
@@ -124,7 +124,7 @@ export default function Particles({
 			context.current.translate(translateX, translateY);
 			context.current.beginPath();
 			context.current.arc(x, y, size, 0, 2 * Math.PI);
-			context.current.fillStyle = `rgba(0, 255, 255, ${alpha})`;
+			context.current.fillStyle = `rgba(4, 64, 16, ${alpha})`;
 			context.current.fill();
 			context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
 

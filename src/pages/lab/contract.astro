@@ -1,24 +1,193 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { EXAMPLE, expectedPayment, PRESETS, DEFAULTS } from "../../scripts/contract-model";
 const show = import.meta.env.DEV;
+const expected = expectedPayment();
+const fmt = (v: number) => `$${v.toLocaleString("en-US")}`;
 ---
-<Base title={show ? "ContractIQ Impact Explorer" : "Coming soon"}>
+<Base title={show ? "ContractIQ Impact Explorer" : "Coming soon"} description="An illustrative model of what contract intelligence is worth to a health system.">
   {show ? (
     <>
-      <p class="draft">Draft: awaiting employer approval. Excluded from production.</p>
-      <h1>ContractIQ Impact Explorer</h1>
-      <p><strong>Illustrative model, not the ContractIQ interface.</strong> All data is synthetic, and defaults come from published industry benchmarks.</p>
-      <h2>1 · Pick a health system</h2>
-      <p><span class="tk">[presets: Community hospital · Regional system · Academic medical center; sliders: net patient revenue, payer contracts, claim volume]</span></p>
-      <h2>2 · Follow one claim</h2>
-      <p>Contract in → terms understood → expected payment → variance flagged → recovered. <span class="tk">[animated pipeline with one synthetic clause]</span></p>
-      <h2>3 · Change the assumptions</h2>
-      <p><span class="tk">[underpayment rate · recoverable share · analyst hours per review · time to model a rate change]</span></p>
-      <h2>4 · Impact</h2>
-      <p><span class="tk">[$ identified and recovered per year · analyst hours returned · time to answer a rate question · contracts monitored]</span></p>
-      <p><span class="tk">[toggle: revenue-cycle team / finance leaders / Aspirion] [drawer: show the math]</span></p>
+      <p class="draft">Draft: awaiting employer approval. Excluded from production builds.</p>
+      <h1>What is a contract worth?</h1>
+      <p class="lede">A hospital can have hundreds of payer contracts, each with its own rates, carve-outs and escalators. When nobody can say what a claim <em>should</em> have paid, underpayments look exactly like payments. ContractIQ, the system I architect at Infinia ML, closes that gap for Aspirion and its clients.</p>
+      <p class="label-strong">This page is an illustrative model, not the ContractIQ interface. The contract and claim are invented, and the defaults come from published industry figures.</p>
+
+      <h2>Follow one claim</h2>
+      <ol class="steps" data-steps>
+        <li class="step" data-step="1">
+          <h3>The contract</h3>
+          <blockquote class="clause">{EXAMPLE.clause}</blockquote>
+          <p class="small">{EXAMPLE.payer}, now in year {EXAMPLE.year} of the agreement.</p>
+        </li>
+        <li class="step" data-step="2">
+          <h3>Terms, understood</h3>
+          <dl class="terms">
+            <div><dt>Payment method</dt><dd>Base rate × DRG weight</dd></div>
+            <div><dt>Base rate</dt><dd>{fmt(EXAMPLE.base)}</dd></div>
+            <div><dt>Escalator</dt><dd>3% each anniversary</dd></div>
+          </dl>
+        </li>
+        <li class="step" data-step="3">
+          <h3>A claim arrives</h3>
+          <p>{EXAMPLE.drg}. Relative weight {EXAMPLE.weight.toFixed(2)}.</p>
+        </li>
+        <li class="step" data-step="4">
+          <h3>Expected payment</h3>
+          <p class="calc">{fmt(EXAMPLE.base)} × 1.03 × {EXAMPLE.weight.toFixed(2)} = <b>{fmt(expected)}</b></p>
+        </li>
+        <li class="step" data-step="5">
+          <h3>Variance flagged</h3>
+          <p class="calc">Paid {fmt(EXAMPLE.paid)}, short <b class="pen">{fmt(expected - EXAMPLE.paid)}</b></p>
+          <p class="small">The payer kept paying the year-one rate. On one claim it's small. Across thousands of claims and hundreds of contracts, it's a budget line.</p>
+        </li>
+      </ol>
+      <div class="step-controls">
+        <button type="button" data-step-next>Show the next step</button>
+        <button type="button" data-step-all>Show all steps</button>
+      </div>
+
+      <h2>Scale it to a health system</h2>
+      <div class="presets" role="group" aria-label="Health system">
+        {Object.entries(PRESETS).map(([k, p], i) => <button type="button" data-preset={k} aria-pressed={i === 1 ? "true" : "false"}>{p.name}</button>)}
+      </div>
+      <p class="small"><span data-out="npr"></span> in net patient revenue and <span data-out="contracts"></span> payer contracts, all invented.</p>
+
+      <div class="explorer wide">
+        <div class="sliders">
+          <div class="ctl"><label for="a-under">Revenue underpaid</label><input id="a-under" type="range" min="0.5" max="5" step="0.1" value={DEFAULTS.underpaymentRate * 100} /><span class="small"><b data-out="under"></b> of net patient revenue. Published estimates run 1–3%.</span></div>
+          <div class="ctl"><label for="a-rec">Share recovered</label><input id="a-rec" type="range" min="10" max="80" step="5" value={DEFAULTS.recoverableShare * 100} /><span class="small"><b data-out="rec"></b> of the variance found</span></div>
+          <div class="ctl"><label for="a-avg">Typical recovery per claim</label><input id="a-avg" type="range" min="500" max="5000" step="250" value={DEFAULTS.avgRecovery} /><span class="small"><b data-out="avg"></b>. Most fall between $1,001 and $2,500.</span></div>
+          <div class="ctl"><label for="a-hrs">Analyst hours to re-model a contract</label><input id="a-hrs" type="range" min="2" max="40" step="1" value={DEFAULTS.reviewHours} /><span class="small"><b data-out="hrs"></b> hours, <b data-out="per"></b> times a year (your assumption)</span></div>
+          <div class="ctl"><label for="a-auto">Modeling work handled by the system</label><input id="a-auto" type="range" min="0" max="100" step="5" value={DEFAULTS.automationShare * 100} /><span class="small"><b data-out="auto"></b> (your assumption)</span></div>
+        </div>
+
+        <div class="ledger well" aria-live="polite">
+          <dl>
+            <div><dt>Underpaid each year</dt><dd class="readout" data-out="variance"></dd></div>
+            <div class="big"><dt>Recovered each year</dt><dd class="readout" data-out="recovered"></dd></div>
+            <div><dt>Claims corrected</dt><dd class="readout" data-out="claims"></dd></div>
+            <div><dt>Analyst hours returned<br /><small data-out="fte"></small></dt><dd class="readout" data-out="hours"></dd></div>
+          </dl>
+          <p class="small" data-out="yield"></p>
+        </div>
+      </div>
+
+      <h3>Who it helps</h3>
+      <div class="presets" role="group" aria-label="Point of view">
+        <button type="button" data-view="rcm" aria-pressed="true">Revenue-cycle team</button>
+        <button type="button" data-view="cfo" aria-pressed="false">Finance leaders</button>
+        <button type="button" data-view="aspirion" aria-pressed="false">Aspirion</button>
+      </div>
+      <p class="view" data-out="view" aria-live="polite"></p>
+
+      <details class="math">
+        <summary>Show the math</summary>
+        <ul>
+          <li>Underpaid = net patient revenue × underpayment rate</li>
+          <li>Recovered = underpaid × share recovered</li>
+          <li>Claims corrected = recovered ÷ typical recovery per claim</li>
+          <li>Hours returned = contracts × hours per re-model × re-models per year × share automated</li>
+        </ul>
+        <p class="small">Sources: hospitals lose an estimated 1–3% of net patient revenue to commercial underpayments (Becker's Hospital Review, cited in <a href="https://www.revecore.com/healthcare-underpayment-benchmarks/">Revecore's underpayment benchmarks</a>); recovery programs typically yield 0.25–1.25% of net patient revenue (same source); most underpayment recoveries fall between $1,001 and $2,500 (Aspirion client data, <a href="https://www.hfma.org/wp-content/uploads/2026/05/hiddenrevenue-aspirion-hfmaoregon.pdf">HFMA Oregon presentation, 2026</a>). Analyst-hour figures are assumptions for you to set.</p>
+      </details>
     </>
   ) : (
-    <><h1>Coming soon</h1><p><a href="/lab">← Lab</a></p></>
+    <><h1>Coming soon</h1><p><a href="/lab">Back to the lab</a></p></>
   )}
 </Base>
+
+<style>
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+  .label-strong { font-weight: 700; border-left: 3px solid var(--pen); padding-left: 0.8rem; }
+  .steps { list-style: none; padding: 0; margin: 0 0 1rem; counter-reset: step; }
+  .step { counter-increment: step; position: relative; padding: 0.25rem 0 1rem 2.75rem; border-left: 1.5px solid var(--ink); margin-left: 0.9rem; }
+  .step::before { content: counter(step); position: absolute; left: -0.95rem; top: 0.1rem; width: 1.8rem; height: 1.8rem; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--ink); display: grid; place-items: center; font-weight: 800; font-size: var(--step--1); }
+  .step:last-child { border-left-color: transparent; }
+  .step h3 { margin: 0 0 0.35rem; font-size: var(--step-0); }
+  .step[data-hidden] { display: none; }
+  .step.revealed { animation: reveal 0.35s ease-out; }
+  @keyframes reveal { from { opacity: 0; transform: translateY(6px); } }
+  .clause { margin: 0 0 0.4rem; padding: 0.75rem 1rem; background: var(--paper-deep); border: 1.5px solid var(--ink); font-size: var(--step--1); }
+  .terms { display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem; margin: 0; }
+  .terms dt { font-size: var(--step--1); color: var(--ink-soft); }
+  .terms dd { margin: 0; font-weight: 700; }
+  .calc { font-family: var(--mono); font-size: var(--step-0); }
+  .pen { color: var(--pen); }
+  .step-controls, .presets { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0 1rem; }
+  .explorer { display: grid; gap: 1.5rem; margin-top: 1rem; }
+  .sliders { display: grid; gap: 1.1rem; }
+  .ctl { display: grid; gap: 0.25rem; }
+  .ledger { padding: 1rem 1.25rem; }
+  @media (min-width: 64rem) {
+    .explorer { margin-left: 15rem; grid-template-columns: minmax(0, 1fr) minmax(0, 24rem); align-items: start; gap: 2.5rem; }
+    .ledger { position: sticky; top: 1.5rem; }
+  }
+  .ledger dl { margin: 0; display: grid; gap: 0.6rem; }
+  .ledger dl div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; border-bottom: 1px solid var(--grid-major); padding-bottom: 0.4rem; }
+  .ledger dt { font-size: var(--step--1); }
+  .ledger dd { margin: 0; font-size: var(--step-1); font-weight: 700; white-space: nowrap; }
+  .ledger .big dd { font-size: var(--step-2); color: var(--pen); }
+  .ledger p { margin: 0.75rem 0 0; }
+  .view { font-size: var(--step-1); line-height: 1.5; min-height: 4.5em; }
+  .math { margin-top: 2rem; border-top: 1.5px solid var(--ink); padding-top: 0.75rem; }
+  .math summary { cursor: pointer; font-weight: 700; }
+  .math ul { font-family: var(--mono); font-size: var(--step--1); }
+</style>
+
+<script>
+  import { PRESETS, DEFAULTS, impact, usd, type System } from "../../scripts/contract-model";
+  const root = document.querySelector("main")!;
+  if (root.querySelector("[data-steps]")) {
+    // Stepper: reveal the claim's journey one stage at a time.
+    const steps = [...root.querySelectorAll<HTMLElement>(".step")];
+    steps.slice(1).forEach((s) => s.setAttribute("data-hidden", ""));
+    const next = root.querySelector<HTMLButtonElement>("[data-step-next]")!;
+    const all = root.querySelector<HTMLButtonElement>("[data-step-all]")!;
+    const reveal = (s: HTMLElement) => { s.removeAttribute("data-hidden"); s.classList.add("revealed"); };
+    const sync = () => { const done = steps.every((s) => !s.hasAttribute("data-hidden")); next.hidden = all.hidden = done; };
+    next.addEventListener("click", () => { const s = steps.find((s) => s.hasAttribute("data-hidden")); if (s) { reveal(s); s.querySelector("h3")?.setAttribute("tabindex", "-1"); (s.querySelector("h3") as HTMLElement)?.focus(); } sync(); });
+    all.addEventListener("click", () => { steps.forEach(reveal); sync(); });
+    sync();
+
+    // Explorer
+    const $ = (k: string) => root.querySelector<HTMLElement>(`[data-out=${k}]`)!;
+    const inp = (id: string) => root.querySelector<HTMLInputElement>(`#${id}`)!;
+    let system: System = PRESETS.regional;
+    let view = "rcm";
+    const pct = (v: number) => `${(v * 100).toFixed(v < 0.1 ? 1 : 0)}%`;
+
+    function update() {
+      const a = { ...DEFAULTS,
+        underpaymentRate: +inp("a-under").value / 100, recoverableShare: +inp("a-rec").value / 100,
+        avgRecovery: +inp("a-avg").value, reviewHours: +inp("a-hrs").value, automationShare: +inp("a-auto").value / 100 };
+      const r = impact(system, a);
+      $("npr").textContent = usd(system.npr); $("contracts").textContent = String(system.contracts);
+      $("under").textContent = pct(a.underpaymentRate); $("rec").textContent = pct(a.recoverableShare);
+      $("avg").textContent = usd(a.avgRecovery); $("hrs").textContent = String(a.reviewHours); $("per").textContent = String(a.reviewsPerYear);
+      $("auto").textContent = pct(a.automationShare);
+      $("variance").textContent = usd(r.variance); $("recovered").textContent = usd(r.recovered);
+      $("claims").textContent = Math.round(r.claims).toLocaleString("en-US");
+      $("hours").textContent = Math.round(r.hours).toLocaleString("en-US");
+      $("fte").textContent = `about ${r.fte.toFixed(1)} full-time analysts`;
+      const y = r.yieldOfNpr;
+      $("yield").textContent = `That's ${(y * 100).toFixed(2)}% of net patient revenue recovered, ${y < 0.0025 ? "below" : y > 0.0125 ? "above" : "inside"} the 0.25–1.25% range published recovery programs report.`;
+      const views: Record<string, string> = {
+        rcm: `For the revenue-cycle team, it means about ${Math.round(r.claims).toLocaleString("en-US")} claims a year found and corrected, without anyone re-reading contracts by hand to know they were wrong.`,
+        cfo: `For finance leaders, it's ${usd(r.recovered)} a year back on the books, plus an evidence base for the next negotiation: what each contract actually pays, and what a rate change would be worth.`,
+        aspirion: `For Aspirion, it's expertise that scales. What a few analysts know about one client's contracts becomes something every client gets, across ${system.contracts} contracts here and thousands more across the book.`,
+      };
+      $("view").textContent = views[view];
+    }
+    for (const b of root.querySelectorAll<HTMLButtonElement>("[data-preset]")) b.addEventListener("click", () => {
+      system = PRESETS[b.dataset.preset!];
+      root.querySelectorAll("[data-preset]").forEach((o) => o.setAttribute("aria-pressed", String(o === b))); update();
+    });
+    for (const b of root.querySelectorAll<HTMLButtonElement>("[data-view]")) b.addEventListener("click", () => {
+      view = b.dataset.view!;
+      root.querySelectorAll("[data-view]").forEach((o) => o.setAttribute("aria-pressed", String(o === b))); update();
+    });
+    root.querySelectorAll(".sliders input").forEach((i) => i.addEventListener("input", update));
+    update();
+  }
+</script>

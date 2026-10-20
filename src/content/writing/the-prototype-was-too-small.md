@@ -2,7 +2,7 @@
 title: "The prototype was too small"
 summary: "Starting simple is good advice. Starting small can be a trap, especially when your users are experts and the domain is dense. What building ContractIQ taught me about the difference."
 date: "2026-10-20"
-status: draft
+status: published
 ---
 
 When we started building ContractIQ, we did what you're supposed to do. We kept it simple.

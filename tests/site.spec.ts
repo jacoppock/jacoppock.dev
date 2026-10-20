@@ -37,7 +37,7 @@ test("unfinished placeholders never ship to production", async ({ page }) => {
     await expect(page.locator("body")).not.toContainText("[TK");
     await expect(page.locator("body")).not.toContainText("placeholder");
   }
-  for (const path of ["/lab/disc", "/writing", "/life/photography"]) {
+  for (const path of ["/lab/disc", "/life/photography"]) {
     await page.goto(path);
     await expect(page.locator("main")).toContainText("Coming soon.");
   }
@@ -67,6 +67,14 @@ test("motion cancellation recovers the heart rate that footsteps hide", async ({
   await expect(page.locator("[data-pl=verdict]")).toHaveText(/Fooled|Lost/);
   await page.getByRole("button", { name: "Use the accelerometer" }).click();
   await expect(page.locator("[data-pl=verdict]")).toHaveText(/Locked on|Close/);
+});
+
+test("the first essay is published and linked from home and nav", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Writing" })).toBeVisible();
+  await page.getByRole("link", { name: "The prototype was too small" }).first().click();
+  await expect(page.locator("h1")).toHaveText("The prototype was too small");
+  await expect(page.locator("body")).not.toContainText("Draft for review");
 });
 
 test("share cards exist for every page", async ({ page }) => {

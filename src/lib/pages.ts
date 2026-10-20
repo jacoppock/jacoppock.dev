@@ -7,7 +7,7 @@ export const PAGES: Record<string, { title: string; kicker: string }> = {
   "/lab/disc": { title: "The Disc", kicker: "How a spinal disc deforms under load" },
   "/research": { title: "Research", kicker: "Medical imaging, spine biomechanics, wearables" },
   "/writing": { title: "Writing", kicker: "Building ML for healthcare" },
-  "/life": { title: "Off the clock", kicker: "Restoration, training, photography, hockey" },
+  "/life": { title: "Off the clock", kicker: "Restoration, training, hockey" },
   "/life/restoration": { title: "Restoring the Bishop-Christian House", kicker: "c. 1904. Recognized by the Durham Historic Preservation Commission." },
   "/life/training": { title: "Training", kicker: "Twelve weeks of lifting, set by set" },
   "/life/photography": { title: "Photography", kicker: "Off the clock" },

@@ -1,10 +1,13 @@
 ---
+import { SHOW_UNFINISHED } from "../../lib/env";
 import Base from "../../layouts/Base.astro";
 ---
 <Base title="The Disc" description="Watch a lumbar disc deform under load, from my Duke dissertation research.">
+  {SHOW_UNFINISHED ? (<>
   <h1>The Disc</h1>
   <p><em>[Interactive, Phase 5]</em></p>
   <p>Your spinal discs are water-filled cushions. Walk for half an hour and they compress measurably, then slowly recover when you lie down. With MRI and deep-learning segmentation we can measure that change automatically.</p>
   <p><span class="tk">[slider: minutes of treadmill walking → disc height/shape · BMI slider · toggle model segmentation vs. ground truth]</span></p>
   <p>Imagery: <span class="tk">[TK: rights-cleared figures, open dataset, or synthetic phantom]</span></p>
+</>) : (<><h1>The Disc</h1><p>Coming soon.</p></>)}
 </Base>

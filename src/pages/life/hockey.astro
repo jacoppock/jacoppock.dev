@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { SHOW_UNFINISHED } from "../../lib/env";
 ---
 <Base title="Hockey" description="On skates since age two; Carolina Hurricanes season-ticket member.">
   <h1>Hockey</h1>
@@ -9,14 +10,16 @@ import Base from "../../layouts/Base.astro";
   <div class="cup">
     <h2>Stanley Cup champions</h2>
     <p>The Canes beat the Vegas Golden Knights to win the 2026 Stanley Cup, the second in franchise history.</p>
-    <p class="small"><span class="tk">[TK: a photo from the playoffs, and the game you'll never forget]</span></p>
+    {SHOW_UNFINISHED && <p class="small"><span class="tk">[TK: a photo from the playoffs, and the game you'll never forget]</span></p>}
   </div>
 
+  {SHOW_UNFINISHED && (<>
   <h2>Growing up on skates</h2>
   <p><span class="tk">[TK: where you played, what position, and a childhood photo]</span></p>
 
   <h2>Our season</h2>
   <p>A log of the games we go to this season, one line each. <span class="tk">[TK: games list for src/data/games.json — date, opponent, result, one-line note]</span></p>
+  </>)}
 </Base>
 <style>
   .lede { font-size: var(--step-1); line-height: 1.5; }

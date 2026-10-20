@@ -96,6 +96,7 @@ code { font-family: var(--mono); font-size: 0.9em; }
 .site-footer { border-top: 1.5px solid var(--ink); padding: 1.25rem 0 3rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; font-size: var(--step--1); color: var(--ink-soft); }
 .site-footer nav { display: flex; gap: 1.1rem; }
 
+[data-env="prod"] .tk { display: none; }
 .tk { background: var(--mark); color: var(--ink); padding: 0 0.2em; border-radius: 2px; }
 .draft { border: 1.5px dashed var(--pen); padding: 0.6rem 1rem; color: var(--pen); }
 

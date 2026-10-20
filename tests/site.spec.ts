@@ -23,12 +23,24 @@ for (const path of PAGES) {
   });
 }
 
-test("drafts never ship: ContractIQ case study and explorer are hidden in production", async ({ page }) => {
+test("approved ContractIQ pages are public", async ({ page }) => {
   await page.goto("/lab/contract");
-  await expect(page.locator("h1")).toHaveText("Coming soon");
-  await expect(page.locator("body")).not.toContainText("Payer A");
+  await expect(page.locator("h1")).toHaveText("What is a contract worth?");
+  await expect(page.locator("body")).toContainText("illustrative model, not the ContractIQ interface");
   const res = await page.request.get("/work/contractiq");
-  expect(res.status()).toBe(404);
+  expect(res.status()).toBe(200);
+});
+
+test("unfinished placeholders never ship to production", async ({ page }) => {
+  for (const path of ["/", "/cv", "/life", "/life/hockey", "/life/restoration", "/work/contractiq", "/lab"]) {
+    await page.goto(path);
+    await expect(page.locator("body")).not.toContainText("[TK");
+    await expect(page.locator("body")).not.toContainText("placeholder");
+  }
+  for (const path of ["/lab/disc", "/writing", "/life/photography"]) {
+    await page.goto(path);
+    await expect(page.locator("main")).toContainText("Coming soon.");
+  }
 });
 
 test("the camera is never requested until the visitor presses Start", async ({ page }) => {

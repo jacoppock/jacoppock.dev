@@ -1,11 +1,12 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { SHOW_UNFINISHED } from "../../lib/env";
 ---
 <Base title="Off the clock">
   <h1>Off the clock</h1>
   <ul>
     <li><a href="/life/restoration"><strong>Restoring a century home</strong></a>: our house in downtown Durham, recognized by the Durham Historic Preservation Commission in April 2026.</li>
-    <li><a href="/life/photography"><strong>Photography</strong></a>: what I see when I'm not looking at signals.</li>
+    {SHOW_UNFINISHED && <li><a href="/life/photography"><strong>Photography</strong></a>: what I see when I'm not looking at signals.</li>}
     <li><a href="/life/training"><strong>Training</strong></a>: twelve weeks of lifting, set by set.</li>
     <li><a href="/life/hockey"><strong>Hockey</strong></a>: on skates since I was two; Hurricanes season-ticket member, and 2026 Stanley Cup champions.</li>
   </ul>

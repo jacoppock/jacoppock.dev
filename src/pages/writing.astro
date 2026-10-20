@@ -1,11 +1,14 @@
 ---
+import { SHOW_UNFINISHED } from "../lib/env";
 import Base from "../layouts/Base.astro";
 ---
 <Base title="Writing">
+  {SHOW_UNFINISHED ? (<>
   <h1>Writing</h1>
   <p>Notes on building ML systems in healthcare, leading ML teams, and turning models into products.</p>
   <ul>
     <li><span class="tk">[TK: first essay. Candidate: "Evaluate on dollars, not just accuracy."]</span></li>
     <li><span class="tk">[TK: "How I built this site," at launch]</span></li>
   </ul>
+</>) : (<><h1>Writing</h1><p>Coming soon.</p></>)}
 </Base>

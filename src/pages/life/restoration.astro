@@ -1,4 +1,5 @@
 ---
+import { SHOW_UNFINISHED } from "../../lib/env";
 import Base from "../../layouts/Base.astro";
 ---
 <Base title="Restoring a century home" description="Restoring the exterior of a century-old home in Durham's Morehead Hill Historic District, recognized by the Durham Historic Preservation Commission.">
@@ -28,7 +29,7 @@ import Base from "../../layouts/Base.astro";
   </figure>
 
   <h2>Recognition</h2>
-  <p>In April 2026 the Durham Historic Preservation Commission recognized our restoration of the Bishop-Christian House, built around 1904. <span class="tk">[TK: photo of the plaque or certificate]</span></p>
+  <p>In April 2026 the Durham Historic Preservation Commission recognized our restoration of the Bishop-Christian House, built around 1904. {SHOW_UNFINISHED && <span class="tk">[TK: photo of the plaque or certificate]</span>}</p>
 
   <h2>The work</h2>
   <ol class="steps">

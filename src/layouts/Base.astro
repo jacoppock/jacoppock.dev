@@ -3,6 +3,7 @@ import "@fontsource-variable/atkinson-hyperlegible-next";
 import "@fontsource-variable/atkinson-hyperlegible-mono";
 import "../styles/global.css";
 import { PAGES, ogPath } from "../lib/pages";
+import { SHOW_UNFINISHED } from "../lib/env";
 
 interface Props { title?: string; description?: string }
 const {
@@ -13,20 +14,20 @@ const fullTitle = title ? `${title} | James Coppock` : "James Coppock, applied M
 const nav = [
   ["/work", "Work"], ["/lab", "Lab"], ["/research", "Research"],
   ["/writing", "Writing"], ["/life", "Off the clock"], ["/about", "About"],
-];
+].filter(([href]) => SHOW_UNFINISHED || href !== "/writing");
 const here = Astro.url.pathname.replace(/\/$/, "") || "/";
 const ogImage = new URL(PAGES[here] ? ogPath(here) : ogPath("/"), Astro.site);
 const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
 const person = {
   "@context": "https://schema.org", "@type": "Person",
   name: "James A. Coppock", url: "https://jacoppock.dev",
-  jobTitle: "Senior AI/ML Applied Scientist", worksFor: { "@type": "Organization", name: "Infinia ML" },
+  jobTitle: "Manager, AI/ML Applied Science", worksFor: { "@type": "Organization", name: "Infinia ML" },
   alumniOf: { "@type": "CollegeOrUniversity", name: "Duke University" },
   sameAs: ["https://github.com/jacoppock", "https://scholar.google.com/citations?user=aUYi9_IAAAAJ"],
 };
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-env={SHOW_UNFINISHED ? "dev" : "prod"}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

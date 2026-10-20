@@ -1,7 +1,12 @@
 ---
+import { SHOW_UNFINISHED } from "../lib/env";
 import Base from "../layouts/Base.astro";
 const jobs = [
-  { title: "Senior AI/ML Applied Scientist", org: "Infinia ML, the AI arm of Aspirion", when: "January 2025 to present",
+  { title: "Manager, AI/ML Applied Science", org: "Infinia ML, the AI arm of Aspirion", when: "October 2026 to present",
+    points: [
+      "Promoted to manager. Lead the ContractIQ and Pricing & Scoring teams.",
+    ] },
+  { title: "Senior AI/ML Applied Scientist", org: "Infinia ML, the AI arm of Aspirion", when: "January 2025 to October 2026",
     points: [
       "Lead the ContractIQ and Pricing & Scoring teams.",
       "Shaped ContractIQ from its earliest design to production: a contract-intelligence platform that turns payer contracts into structured, auditable reimbursement logic, so providers can see what they should be paid and catch underpayments.",
@@ -37,7 +42,7 @@ const skills = ["Deep learning and computer vision", "Generative AI and LLM agen
 <Base title="CV" description="Curriculum vitae of James A. Coppock, PhD.">
   <h1>James A. Coppock, PhD</h1>
   <p class="lede">Applied scientist and ML leader, taking AI from research to production in high-stakes healthcare.</p>
-  <p><a href="mailto:j.avery.coppock@gmail.com">j.avery.coppock@gmail.com</a>, <a href="https://www.linkedin.com/in/jacoppock/">LinkedIn</a>, <a href="https://github.com/jacoppock">GitHub</a>, <a href="https://scholar.google.com/citations?user=aUYi9_IAAAAJ">Google Scholar</a>. <span class="tk">[PDF download, once the résumé is refreshed]</span></p>
+  <p><a href="mailto:j.avery.coppock@gmail.com">j.avery.coppock@gmail.com</a>, <a href="https://www.linkedin.com/in/jacoppock/">LinkedIn</a>, <a href="https://github.com/jacoppock">GitHub</a>, <a href="https://scholar.google.com/citations?user=aUYi9_IAAAAJ">Google Scholar</a>. {SHOW_UNFINISHED && <span class="tk">[PDF download, once the résumé is refreshed]</span>}</p>
 
   <h2>Experience</h2>
   {jobs.map((j) => (

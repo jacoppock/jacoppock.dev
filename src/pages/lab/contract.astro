@@ -1,16 +1,15 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { EXAMPLE, expectedPayment, PRESETS, DEFAULTS } from "../../scripts/contract-model";
-const show = import.meta.env.DEV;
+const show = true; // approved for publication by Infinia ML, October 2026
 const expected = expectedPayment();
 const fmt = (v: number) => `$${v.toLocaleString("en-US")}`;
 ---
 <Base title={show ? "ContractIQ Impact Explorer" : "Coming soon"} description="An illustrative model of what contract intelligence is worth to a health system.">
   {show ? (
     <>
-      <p class="draft">Draft: awaiting employer approval. Excluded from production builds.</p>
       <h1>What is a contract worth?</h1>
-      <p class="lede">A hospital can have hundreds of payer contracts, each with its own rates, carve-outs and escalators. When nobody can say what a claim <em>should</em> have paid, underpayments look exactly like payments. ContractIQ, the system I architect at Infinia ML, closes that gap for Aspirion and its clients.</p>
+      <p class="lede">A hospital can have hundreds of payer contracts, each with its own rates, carve-outs and escalators. When nobody can say what a claim <em>should</em> have paid, underpayments look exactly like payments. ContractIQ, the platform I lead at Infinia ML, closes that gap for Aspirion and its clients.</p>
       <p class="label-strong">This page is an illustrative model, not the ContractIQ interface. The contract and claim are invented, and the defaults come from published industry figures.</p>
 
       <h2>Follow one claim</h2>

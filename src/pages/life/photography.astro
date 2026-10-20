@@ -1,9 +1,11 @@
 ---
+import { SHOW_UNFINISHED } from "../../lib/env";
 import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
 const photos = await getCollection("photos");
 ---
 <Base title="Photography">
+  {SHOW_UNFINISHED ? (<>
   <h1>Photography</h1>
   <p>To add a photo, drop a file in <code>src/content/photos/</code>. Placeholders are marked until they're replaced.</p>
   {photos.map((p) => (
@@ -12,4 +14,5 @@ const photos = await getCollection("photos");
       <figcaption><strong>{p.data.title}</strong>{p.data.placeholder && <span class="tk"> [placeholder]</span>}: {p.data.story}</figcaption>
     </figure>
   ))}
+</>) : (<><h1>Photography</h1><p>Coming soon.</p></>)}
 </Base>

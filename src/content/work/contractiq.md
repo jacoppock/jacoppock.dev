@@ -22,9 +22,9 @@ I've shaped ContractIQ from its earliest design through to production, and I lea
 - **Answer rate questions in minutes, not days.** Model "what if this rate changes?" across a portfolio of contracts.
 - **Scale expertise.** Contract knowledge that lived in a few analysts' heads becomes something the whole organization and every client can use.
 
-## How I think about systems like this
+## What I learned
 
-<span class="tk">[TK: 2–3 approved lessons, e.g., designing for auditability, where ML helps vs. where rules win, evaluating on dollars rather than accuracy alone.]</span>
+Our first users were a small team of contract experts, most of them not technical. The hard part wasn't the model. It was representing dense contract language in a way people could read, trust and change themselves. We started simple, aiming for adoption with a lightweight prototype. We quickly learned the problem needed something much bigger and bolder, and rebuilt around that. <span class="tk">[TK: anything else, once approved]</span>
 
 ## Explore the idea
 

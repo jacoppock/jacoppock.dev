@@ -19,4 +19,9 @@ Algorithm engineer.
 
 - Algorithms and data pipelines for the Wilson X line of connected footballs and basketballs.
 - Field studies with NFL and NCAA teams on whether ball-level data could give athletes and coaches next-generation analytics.
-- <span class="tk">[TK: a concrete story from this work, from our question session]</span>
+
+## What the field taught me
+
+The lab is clean; practice isn't. Balls changed hands constantly, so just knowing who was throwing, and when, was a problem of its own. The Bluetooth radio inside the ball wasn't always strong enough to capture a throw cleanly. And the sensors themselves shifted the ball's mass and moment of inertia just enough that professionals could feel the difference in their hands.
+
+That last one stuck with me. The best algorithm in the world doesn't matter if the instrument changes the thing you're trying to measure. Now I start every sensing problem by asking what the measurement costs the person being measured.

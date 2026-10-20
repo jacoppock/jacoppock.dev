@@ -25,8 +25,10 @@ ML engineer on wearable algorithms.
 - A cuffless blood-pressure monitor that went to market.
 - ETL pipelines for training, testing and validating time-series models.
 
-## What I'd do differently
+## What made it hard
 
-<span class="tk">[TK: from our question session]</span>
+Blood pressure is usually a discrete measurement: a cuff gives you one reading every so often. We were trying to turn it into a continuous one. That creates a huge label imbalance: hours of dense optical signal, and only a handful of cuff readings to learn from. Finding real signal in that noise was hard, and harder still because people wore the sensors in different places on the body, and each site sees the pulse differently.
+
+It taught me to respect the labels as much as the model. When ground truth is sparse, how you collect it and line it up with the signal decides how good the model can ever be.
 
 The [Pulse exhibit](/lab/pulse) is a hands-on version of this problem.

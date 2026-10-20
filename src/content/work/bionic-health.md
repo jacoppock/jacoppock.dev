@@ -21,6 +21,8 @@ I led Data Science & AI. Bionic Health was acquired in 2025 and is now Thrive We
 - **Clinical decision support.** A FHIR-compliant, agent-based generative-AI framework that distills patient data into evidence-based recommendations for clinicians in real time.
 - **Patient engagement.** A retrieval-augmented assistant for onboarding and clinician-approved lifestyle, nutrition and exercise guidance.
 
-## What I'd do differently
+## What I learned
 
-<span class="tk">[TK: from our question session]</span>
+We had an unusual position: working in consumer health and clinical medicine at the same time. Patients and clinicians both wanted their data, but they wanted different things, at different moments, for different reasons. Getting the right data to the right person when they actually need it is the real problem, and it's harder than any single model.
+
+We also built an EHR from the ground up. It's hard, and it's rewarding: you learn exactly where clinical data comes from and every way it can go wrong.

@@ -27,6 +27,6 @@ PhD researcher in the Musculoskeletal Bioengineering Lab (advisor: Louis DeFrate
 - Finding: higher BMI means greater lumbar disc deformation after a walking stress test (*Journal of Biomechanics*, 2021).
 - See [Research](/research) for papers and the patent.
 
-## What I'd do differently
+## What I'd tell a new PhD student
 
-<span class="tk">[TK: from our question session]</span>
+Explore your interests. Try something hard, fail at it, learn from it, and build something better. And pay attention to the bleeding edge of the science, because the method you need may have been published last month.

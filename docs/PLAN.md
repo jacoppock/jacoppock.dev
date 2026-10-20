@@ -1,6 +1,6 @@
 # jacoppock.dev v2 — Rebuild Plan
 
-*Draft 2 · 2026-10-20 · branch `v2`*
+*Draft 3 · 2026-10-20 · branch `v2`*
 
 ## 0. Decisions so far
 
@@ -12,7 +12,11 @@
 | Real estate | **Off the site.** |
 | Historic preservation | **On the site** as a personal section: the exterior restoration of our home and its local preservation recognition. |
 | ContractIQ | High-level only, plus an **interactive impact mock-up** that looks deliberately unlike the real product. It shows utility and dollar impact for us and our clients. |
-| Human side | Photography and hockey (from the project brief), plus historic preservation. |
+| Human side | Photography, hockey, and historic preservation. |
+| Camera | **Never on by default.** The pulse exhibit runs on James's Oura data. The camera is a separate, clearly labeled opt-in. |
+| Wearable data | Oura data is approved as the default dataset. |
+| Photography | No archive yet. Ship with placeholder images, swap in real photos later. |
+| ContractIQ approval | James will get Infinia ML sign-off later. Until then the section stays behind a draft flag (see §3). |
 
 ## 1. What's in the repo today (audited)
 
@@ -34,12 +38,13 @@
 
 ### The exhibits
 
-**A. Pulse (home-page centerpiece).**
-- The visitor opts in to the camera (fingertip on a phone, or face on a webcam). The raw light signal goes through detrending, a band-pass filter with a draggable cutoff, injected motion artifacts ("shake your phone"), and artifact removal, then ends in peak detection and a heart-rate readout.
-- All processing happens on the device and nothing is uploaded. The page says so in plain words.
-- **Fallback for no camera or a declined prompt:** a recorded trace from James's own wearable. *(The Oura ring is already connected to this computer, so real overnight HR/HRV data can drive the fallback chart and a "my week" strip, subject to James choosing what to publish.)*
+**A. Pulse (home-page centerpiece): "A night in my signals."**
+- **Default view, no permissions needed.** One real night of James's Oura data drawn as a live instrument trace: heart rate and HRV every 5 minutes, movement every 30 seconds, and sleep stages, with a slider to scrub through the night. A calendar strip lets the visitor pick any of about 100 nights (Aug–Oct 2026 so far, extended over time).
+- **The explorable.** The ring stores summaries, not the raw pulse waveform, so the signal-processing lesson runs on a beat-level waveform **reconstructed from James's own heart-rate and HRV values**, labeled "reconstructed from my data." The visitor adds motion noise, drags the band-pass cutoff, removes artifacts and watches heart rate recover. That walks through the same detrend → filter → artifact removal → peak detection steps as before, with no camera.
+- **Opt-in camera mode: "Try it with your own pulse →".** A secondary button the visitor has to choose. No permission prompt fires until they click, and the page says plainly that everything stays on their device and nothing is recorded. If they decline or have no camera, nothing breaks, because the default view is the complete experience.
+- **Data pipeline.** A build-time script pulls Oura nights into static JSON, so the site makes no live API calls and no ring token ever reaches the browser. James chooses which nights and metrics to publish. Timestamps are shifted to relative time ("hour 3 of sleep") so the data doesn't reveal his daily schedule.
 - Tells the Valencell and Wilson story: motion-tolerant sensing.
-- Must state its limits: it is not a medical device, and camera pulse readings are less accurate on darker skin.
+- The camera mode must state its limits: it is not a medical device, and camera pulse readings are less accurate on darker skin.
 
 **B. The Disc (Duke research).**
 - Scrub "minutes of treadmill walking" and watch a segmented lumbar disc deform. A BMI slider reproduces the *J. Biomech* 2021 finding.
@@ -53,11 +58,17 @@
 - **Restoring a Morehead Hill house (historic preservation).**
   - A drag slider for before/after photos of the exterior.
   - A scroll-through elevation drawing with annotated stages: assessment, paint and wood repair, refinishing, final.
-  - A short essay on why to restore rather than replace, and the local preservation recognition, with a link or photo of the plaque or award.
+  - A short essay on why to restore rather than replace, and the local preservation recognition **(awarded April 2026)**, with a photo of the plaque or award.
   - Tie-in to the theme: restoration is signal recovery, recovering what was there instead of overwriting it.
   - ⚠️ **Privacy:** name the historic district, not the street address, and crop house numbers out of photos. Decide this deliberately before publishing.
 - **Photography.** A fast, full-bleed gallery. Each photo can flip to show EXIF settings and a one-line story. Images are served as AVIF/WebP with blur placeholders.
-- **Hockey.** Light and fun, with a photo, team or league, and position. An optional small data toy, such as a shot map or season stats if James has the data. A renovation-themed 404 page also fits here.
+  - **Launch with placeholders:** about 12 generated placeholder images (abstract gradients or film-grain studies, not stock photos posing as James's work) with placeholder captions. Each photo is a content-collection entry (`src/content/photos/*.md`: image, title, story, EXIF read automatically at build time), so adding a real photo means dropping in one file. A "placeholder" flag keeps each entry visibly marked until it's replaced.
+- **Hockey.** James learned to skate at age 2, played growing up, and is now an avid Carolina Hurricanes fan and season-ticket member.
+  - Story: "on skates since age 2," with childhood photos as placeholders for now.
+  - **Data toy, "My season at Lenovo Center":** a rink-shaped seat-view graphic plus a games-attended log, with the result, a one-line note and a photo for each game. It's populated from a small `games.json` James updates, or from public schedule and score data at build time.
+  - Bonus: on game nights, a small "Canes play tonight" readout in the footer.
+  - ⚠️ No Hurricanes or NHL logos or marks. Name the team in text and use your own photos and an original rink drawing.
+- A renovation-themed 404 page also fits here.
 
 ## 3. ContractIQ Impact Explorer: spec
 
@@ -76,6 +87,8 @@
 - Defaults use **published industry benchmarks**, with citations, for underpayment rates and contract-management labor.
 - Any Aspirion-specific outcome figure appears only as an **employer-approved range**.
 - A "Show the math" drawer exposes every formula, which builds credibility with technical readers.
+
+**Until approval arrives.** Build the explorer now with *industry-benchmark defaults only* and no Aspirion figures. The ContractIQ case study and explorer carry `status: draft` in the content collection, and CI refuses to publish draft entries to production. Preview deploys can show them for review.
 
 **Copy around it.** About 150 words covering the problem, James's role (primary architect and technical owner), the outcome categories, and two or three lessons on architecture and leadership. Get written sign-off from Infinia ML/Aspirion on this text and on any numbers.
 
@@ -127,7 +140,7 @@
 
 **2. The rawest material (not the résumé)**
 - Dissertation and paper figures, plus the data behind them.
-- Your own wearable data (Oura is connected).
+- Your own wearable data: Oura, about 100 nights of 5-minute HR/HRV, 30-second movement and sleep stages (approved as the default).
 - The real filtering and segmentation notebooks.
 - Wilson/NFL IMU stories.
 - Patent drawings.
@@ -164,15 +177,16 @@
 | 1. Ugly draft | 2–3 | Plain-HTML Astro site with all copy | Passes the 5-second test |
 | 2. Concept sprint | 3–4 | Moodboard + 3 Pulse prototypes + 1 Impact Explorer wireframe | One direction chosen |
 | 3. Foundation | 4–6 | Design system, IA, CV, OG cards, analytics, CI gates, `/life` galleries | Lighthouse ≥ 95, axe clean |
-| 4. Pulse | 6–9 | Camera + recorded fallback, worker pipeline | Works on iOS Safari, Android Chrome, desktop |
+| 4. Pulse | 6–9 | Oura build-time export, "night" instrument, reconstructed-waveform explorable, opt-in camera mode | Default experience requests no permissions; works on iOS Safari, Android Chrome, desktop |
 | 5. Impact Explorer + Disc + case studies | 9–11 | Two more exhibits, 5 case studies, 1 essay | Peer review passed; employer approval in hand |
 | 6. Launch | 12 | Merge `v2` → `main`, "How I built this" post | Baseline metrics captured |
 
 ## 8. Open questions for James
 
-1. Should the restoration section name the street or only the district? What was the recognition (organization and year)?
-2. Which hockey: playing (league, position), fandom, or both? Any stats or photos?
-3. Where does the photography archive live (Lightroom, Apple Photos, a folder)?
-4. Which wearable data are you comfortable publishing (e.g., one week of HR/HRV)?
-5. Who at Infinia ML/Aspirion signs off on ContractIQ copy and numbers?
-6. Confirm the host and DNS (Vercel?) and whether `www` or the apex is canonical.
+Answered 2026-10-20: recognition awarded April 2026 · hockey = played growing up + Canes fan and season-ticket member · no photo archive yet (use placeholders) · Infinia approval later · Oura approved as default · camera opt-in only.
+
+Still open:
+1. Which organization gave the preservation recognition? Should the section name the street or only the district?
+2. Which Oura metrics are okay to publish: HR, HRV, sleep stages, movement? Should any nights be excluded?
+3. Confirm the host and DNS (Vercel?) and whether `www` or the apex is canonical.
+4. Do you have childhood hockey photos and restoration before/after photos to scan or send?

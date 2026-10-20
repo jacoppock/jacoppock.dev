@@ -1,24 +1,43 @@
 ---
 import Base from "../layouts/Base.astro";
+import NightChart from "../components/NightChart.astro";
+import night from "../data/featured-night.json";
 ---
 <Base>
-  <h1>I build ML systems that turn messy healthcare signals into decisions people can trust.</h1>
-  <p>From heartbeats and MRIs to payer contracts. I'm James Coppock, a Senior AI/ML Applied Scientist at Infinia ML, the AI arm of Aspirion. I'm the primary architect of ContractIQ, our system for healthcare contract management and reimbursement pricing. I have a PhD in Biomedical Engineering from Duke and live in Durham, NC.</p>
+  <h1 class="hero-title">I build ML systems that turn messy healthcare signals into decisions people can trust.</h1>
 
-  <section>
-    <h2>Exhibit 1 · A night in my signals</h2>
-    <p><em>[Interactive, Phase 4]</em> One real night of my heart rate, HRV, movement and sleep stages, recorded by the ring on my finger. Scrub through the night, then add motion noise to a pulse waveform rebuilt from my own data and watch a filter recover the heartbeat.</p>
-    <p>Optional: <a href="/lab/pulse">Try it with your own pulse →</a> (uses your camera only if you choose to; nothing leaves your device).</p>
-  </section>
+  <NightChart night={night} animate />
 
-  <section>
-    <h2>Three signals, one through-line</h2>
-    <ul>
-      <li><strong>Signal: the body.</strong> Motion-tolerant heart-rate and blood-pressure algorithms at Valencell; IMU ball tracking for NFL teams at Wilson. <a href="/lab/pulse">Pulse →</a></li>
-      <li><strong>Image: the tissue.</strong> Deep-learning segmentation and registration of spine MRI at Duke, measuring how intervertebral discs deform under load. <a href="/lab/disc">The Disc →</a></li>
-      <li><strong>Contract: the bill.</strong> ContractIQ turns payer contracts into expected payments, so underpayments get caught and rates get negotiated with evidence. <a href="/lab/contract">Impact explorer →</a></li>
-    </ul>
-  </section>
+  <p class="lede">That's my heart, asleep. Somewhere between the ring on my finger and this chart, a noisy flicker of light became a heart rate you can read. I've spent my career on that kind of step, from heartbeats and spine MRIs to the payer contracts that decide what care is paid.</p>
+  <p>I'm a Senior AI/ML Applied Scientist at Infinia ML, the AI arm of Aspirion, and the primary architect of ContractIQ. Before that I did a PhD in Biomedical Engineering at Duke. <a href="/lab/pulse">See how the heartbeat gets out of the noise</a>.</p>
 
-  <p><a href="/work">See the work</a> · <a href="/cv">CV</a> · <a href="/contact">Get in touch</a></p>
+  <h2>Three signals</h2>
+
+  <p class="note">Valencell, Wilson</p>
+  <div class="signal">
+    <h3><a href="/lab/pulse">The body</a></h3>
+    <p>Heart rate and blood pressure from optical sensors that keep working while people move, and real-time ball tracking from sensors inside footballs, built with NFL teams.</p>
+  </div>
+
+  <p class="note">Duke University</p>
+  <div class="signal">
+    <h3><a href="/lab/disc">The tissue</a></h3>
+    <p>Deep-learning segmentation and registration of spine MRI, measuring how intervertebral discs deform under everyday load. It became my dissertation.</p>
+  </div>
+
+  <p class="note">Infinia ML</p>
+  <div class="signal">
+    <h3><a href="/work">The bill</a></h3>
+    <p>ContractIQ reads payer contracts and works out what each claim should pay, so underpayments get caught and rates get negotiated with evidence.</p>
+  </div>
+
+  <p class="next"><a href="/work">Read the case studies</a>, grab the <a href="/cv">CV</a>, or <a href="/contact">get in touch</a>.</p>
 </Base>
+
+<style>
+  .hero-title { max-width: 22ch; margin-top: 0.5rem; }
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+  .signal h3 { margin-top: 0; }
+  .signal { margin-bottom: 1.5rem; }
+  .next { margin-top: 2.5rem; }
+</style>

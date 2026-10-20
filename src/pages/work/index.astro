@@ -6,14 +6,21 @@ const items = (await getCollection("work")).filter(isVisible).sort((a, b) => a.d
 ---
 <Base title="Work">
   <h1>Work</h1>
-  <p>Each case study follows the same shape: problem, my role, approach, outcome, and what I'd do differently.</p>
-  <ul>
-    {items.map((w) => (
-      <li>
-        <a href={`/work/${w.id}`}><strong>{w.data.title}</strong></a>, {w.data.org} · {w.data.years}
-        {w.data.status === "draft" && <span class="tk"> [DRAFT: hidden in production]</span>}
-        <br />{w.data.summary}
-      </li>
-    ))}
-  </ul>
+  <p class="lede">Each case study follows the same shape: the problem, my role, the approach, the outcome, and what I'd do differently.</p>
+  {items.map((w) => (
+    <>
+      <p class="note">{w.data.years}<br />{w.data.org}</p>
+      <article class="entry">
+        <h2><a href={`/work/${w.id}`}>{w.data.title}</a></h2>
+        {w.data.status === "draft" && <p class="draft">Draft, hidden on the live site until approved.</p>}
+        <p>{w.data.summary}</p>
+      </article>
+    </>
+  ))}
 </Base>
+<style>
+  .lede { font-size: var(--step-1); }
+  .entry h2 { margin-top: 0; font-size: var(--step-1); }
+  .entry { margin-bottom: 1.75rem; }
+  @media (max-width: 63.99rem) { .note { margin: 1.5rem 0 0.25rem; } }
+</style>

@@ -1,0 +1,140 @@
+---
+// The signal-processing explorable. Listens for "moment" events from a NightChart on the page.
+---
+<section class="pulse-lab wide" aria-labelledby="pl-title">
+  <div class="pl-text inset">
+    <h2 id="pl-title">From light to heartbeat</h2>
+    <p>The ring keeps summaries, not its raw optical signal, so this waveform is rebuilt from my own heart rate and HRV at the moment you picked above: <b data-pl="source">—</b>.</p>
+  </div>
+
+  <div class="pl-controls" role="group" aria-label="Signal controls">
+    <div class="ctl">
+      <label for="pl-motion">Movement</label>
+      <input id="pl-motion" type="range" min="0" max="100" value="0" />
+      <span class="small" data-pl="motion-label">Lying still</span>
+    </div>
+    <div class="ctl">
+      <label for="pl-lo">Filter keeps</label>
+      <div class="pair">
+        <input id="pl-lo" type="range" min="0.2" max="1.5" step="0.05" value="0.5" aria-label="Lowest frequency kept, hertz" />
+        <input id="pl-hi" type="range" min="2" max="8" step="0.25" value="4" aria-label="Highest frequency kept, hertz" />
+      </div>
+      <span class="small"><span class="readout" data-pl="band">0.5–4.0</span> Hz (<span data-pl="band-bpm">30–240</span> bpm)</span>
+    </div>
+    <div class="ctl">
+      <span class="lbl">Motion cancellation</span>
+      <button type="button" aria-pressed="false" data-pl="cancel">Use the accelerometer</button>
+      <span class="small">Learns how movement leaks into the light signal and subtracts it.</span>
+    </div>
+  </div>
+
+  <div class="well pl-well"><canvas role="img" aria-label="Three traces: raw light at the sensor, the cleaned pulse with detected beats, and the accelerometer."></canvas></div>
+
+  <dl class="pl-result" aria-live="polite">
+    <div><dt>True heart rate</dt><dd><span class="readout" data-pl="true">—</span> bpm</dd></div>
+    <div><dt>Estimated from the signal</dt><dd class="est"><span class="readout" data-pl="est">—</span> bpm</dd></div>
+    <div><dt>Verdict</dt><dd data-pl="verdict">—</dd></div>
+  </dl>
+</section>
+
+<style>
+  .pulse-lab { margin: 1.5rem 0 2rem; }
+  .pl-text { max-width: var(--measure); }
+  .pl-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1.25rem 2rem; margin: 1.25rem 0; }
+  .ctl { display: grid; gap: 0.35rem; align-content: start; }
+  .ctl .lbl { font-size: var(--step--1); font-weight: 650; }
+  .ctl button { justify-self: start; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .pl-well { height: clamp(260px, 34vw, 360px); }
+  canvas { width: 100%; height: 100%; display: block; }
+  .pl-result { display: flex; flex-wrap: wrap; gap: 0.75rem 2.5rem; margin: 1rem 0 0; }
+  .pl-result dt { font-size: var(--step--1); color: var(--ink-soft); }
+  .pl-result dd { margin: 0; font-size: var(--step-1); font-weight: 700; }
+  .pl-result .est { color: var(--pen); }
+</style>
+
+<script>
+  import { synthesize, process, FS } from "../scripts/ppg";
+  import { fmtDuration } from "../scripts/night-chart";
+
+  const root = document.querySelector<HTMLElement>(".pulse-lab")!;
+  const $ = (k: string) => root.querySelector<HTMLElement>(`[data-pl=${k}]`)!;
+  const motion = root.querySelector<HTMLInputElement>("#pl-motion")!;
+  const lo = root.querySelector<HTMLInputElement>("#pl-lo")!;
+  const hi = root.querySelector<HTMLInputElement>("#pl-hi")!;
+  const cancelBtn = $("cancel");
+  const canvas = root.querySelector("canvas")!;
+  const ctx = canvas.getContext("2d")!;
+  const css = (n: string) => getComputedStyle(root).getPropertyValue(n).trim();
+
+  let state = { hr: 55, hrv: 60, breath: 14, seed: 1, label: "—" };
+  let raf = 0;
+
+  const motionLabel = (m: number) => m === 0 ? "Lying still" : m < 0.35 ? "Walking" : m < 0.7 ? "Brisk walk" : "Running";
+
+  function render() {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const m = +motion.value / 100;
+      const opts = { lo: +lo.value, hi: +hi.value, cancel: cancelBtn.getAttribute("aria-pressed") === "true" };
+      const s = synthesize(state.hr, state.hrv, state.breath, m, 12, state.seed);
+      const r = process(s, opts);
+
+      $("motion-label").textContent = motionLabel(m);
+      $("band").textContent = `${opts.lo.toFixed(2)}–${opts.hi.toFixed(1)}`;
+      $("band-bpm").textContent = `${Math.round(opts.lo * 60)}–${Math.round(opts.hi * 60)}`;
+      $("true").textContent = String(state.hr);
+      $("est").textContent = r.bpm ? String(Math.round(r.bpm)) : "—";
+      const err = r.bpm ? Math.abs(r.bpm - state.hr) : Infinity;
+      $("verdict").textContent = err <= 3 ? "Locked on" : err <= 8 ? "Close" : m > 0 && !opts.cancel ? "Fooled by footsteps" : "Lost the beat";
+
+      // Draw three lanes
+      const dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+      const font = getComputedStyle(root).fontFamily;
+      const lanes = [
+        { y: 0.04, hgt: 0.34, data: s.light, color: css("--graphite"), width: 1.4, label: "Light at the sensor" },
+        { y: 0.42, hgt: 0.36, data: r.filtered, color: css("--pen"), width: 2.2, label: "Cleaned pulse" },
+        { y: 0.82, hgt: 0.14, data: s.accel, color: css("--hrv"), width: 1.1, label: "Accelerometer" },
+      ];
+      const x = (i: number) => 8 + (i / (s.t.length - 1)) * (w - 16);
+      for (const lane of lanes) {
+        let mn = Infinity, mx = -Infinity;
+        for (let i = FS; i < lane.data.length; i++) { mn = Math.min(mn, lane.data[i]); mx = Math.max(mx, lane.data[i]); }
+        if (!(mx > mn)) { mn -= 1; mx += 1; }
+        const top = lane.y * h + 16, hh = lane.hgt * h - 16;
+        const y = (v: number) => top + hh - ((v - mn) / (mx - mn)) * hh;
+        ctx.strokeStyle = lane.color; ctx.lineWidth = lane.width; ctx.lineJoin = "round";
+        ctx.beginPath();
+        for (let i = FS; i < lane.data.length; i++) i === FS ? ctx.moveTo(x(i), y(lane.data[i])) : ctx.lineTo(x(i), y(lane.data[i]));
+        ctx.stroke();
+        ctx.fillStyle = css("--ink-soft"); ctx.font = `650 11px ${font}`; ctx.textAlign = "left"; ctx.textBaseline = "top";
+        ctx.fillText(lane.label, 10, top - 15);
+        if (lane.data === r.filtered) {
+          ctx.fillStyle = css("--ink");
+          for (const p of r.peaks) { ctx.beginPath(); ctx.moveTo(x(p), y(lane.data[p]) - 10); ctx.lineTo(x(p) - 4, y(lane.data[p]) - 17); ctx.lineTo(x(p) + 4, y(lane.data[p]) - 17); ctx.fill(); }
+        }
+      }
+      // True beats as faint ticks along the cleaned lane's baseline
+      ctx.strokeStyle = css("--ink"); ctx.globalAlpha = 0.35; ctx.lineWidth = 1;
+      for (const b of s.beats) { if (b < 1) continue; const xx = x(b * FS); ctx.beginPath(); ctx.moveTo(xx, 0.79 * h); ctx.lineTo(xx, 0.8 * h); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  function onMoment({ moment, night }: any) {
+    state = { hr: moment.hr ?? night.avgHr, hrv: moment.hrv ?? night.avgHrv, breath: moment.breath ?? 14, seed: moment.index + 1, label: "" };
+    $("source").textContent = `${state.hr} bpm, HRV ${state.hrv} ms, ${fmtDuration(moment.minutes)} into sleep`;
+    render();
+  }
+  document.addEventListener("moment", (e) => onMoment((e as CustomEvent).detail));
+  const pending = document.querySelector<HTMLElement>("figure.night[data-moment]");
+  if (pending) onMoment(JSON.parse(pending.dataset.moment!));
+  for (const el of [motion, lo, hi]) el.addEventListener("input", render);
+  cancelBtn.addEventListener("click", () => {
+    cancelBtn.setAttribute("aria-pressed", String(cancelBtn.getAttribute("aria-pressed") !== "true"));
+    render();
+  });
+  new ResizeObserver(render).observe(canvas);
+</script>

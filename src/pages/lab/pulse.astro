@@ -1,16 +1,33 @@
 ---
 import Base from "../../layouts/Base.astro";
+import NightChart from "../../components/NightChart.astro";
+import PulseLab from "../../components/PulseLab.astro";
+import CameraPulse from "../../components/CameraPulse.astro";
+import night from "../../data/featured-night.json";
 ---
-<Base title="Pulse" description="From raw light to heartbeat: an explorable built on a night of my own wearable data.">
+<Base title="Pulse" description="From raw light to heartbeat: an explorable built on months of my own wearable data.">
   <h1>Pulse</h1>
-  <p><em>[Interactive, Phase 4]</em></p>
-  <h2>1 · A night in my signals</h2>
-  <p>My ring records heart rate and heart-rate variability every five minutes, movement every thirty seconds, and estimated sleep stages. Here is one night of it. <span class="tk">[chart: HR / HRV / movement / sleep stages, scrubbable; night picker]</span></p>
-  <h2>2 · Where a heart rate comes from</h2>
-  <p>A ring or watch doesn't hear your heart. It shines light into your skin and measures how much comes back. Each heartbeat pushes a little more blood through the vessels, so the reflected light dips and rises. The ring stores summaries rather than this raw waveform, so the trace below is <strong>reconstructed from my own heart-rate and HRV values</strong>.</p>
-  <h2>3 · Now move</h2>
-  <p>Add footsteps and arm swing and the pulse drowns. <span class="tk">[controls: add motion · band-pass cutoff slider · artifact removal on/off · detected beats → BPM]</span> This is the problem I worked on at Valencell.</p>
-  <h2>4 · Optional: try it with your own pulse</h2>
-  <p>If you'd like, rest a fingertip over your phone's camera, or sit still in front of your webcam. The camera turns on only when you press the button. Processing happens entirely in your browser, and no video is recorded or sent anywhere. <span class="tk">[button: Start camera]</span></p>
-  <p><small>This is a demonstration, not a medical device. Camera-based pulse readings are noisy and are known to be less accurate on darker skin tones.</small></p>
+  <p class="lede">A ring or a watch doesn't hear your heart. It shines light into your skin and measures how much comes back. Each heartbeat pushes a little more blood under the sensor, so the returning light dips. Everything else, including breathing, footsteps and a twitch of the hand, also changes that light. Getting a heart rate means pulling one rhythm out of all the others.</p>
+
+  <h2>A night in my signals</h2>
+  <p>Pick any of the nights I've recorded and drag across the chart. Each moment you pick feeds the experiment below.</p>
+  <NightChart night={night} picker />
+
+  <PulseLab />
+
+  <h2>What to try</h2>
+  <ol>
+    <li>Leave movement at zero. The filter finds the beat easily.</li>
+    <li>Slide movement toward running. Footsteps land at two to three steps a second, right inside the heart's frequency range, and the estimate locks onto your stride instead of your heart.</li>
+    <li>Turn on motion cancellation. The accelerometer tells the algorithm what movement looks like, and it subtracts that from the light. This is the idea behind motion-tolerant wearables, the problem I worked on at Valencell.</li>
+  </ol>
+
+  <CameraPulse />
+
+  <h2>Methods</h2>
+  <p class="small">Data: Oura ring sleep sessions, heart rate and RMSSD every 5 minutes, movement every 30 seconds; clock times removed. Waveform: two-Gaussian pulse model per beat, beat intervals drawn from the recorded heart rate with spread set by RMSSD, breathing at the recorded rate. Processing: zero-phase Butterworth band-pass, normalized-LMS adaptive noise cancellation with the accelerometer as reference, peak detection with an adaptive threshold, heart rate from the median beat interval. All of it runs in your browser; <a href="https://github.com/jacoppock/jacoppock.dev/blob/main/src/scripts/ppg.ts">read the code</a>.</p>
 </Base>
+
+<style>
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+</style>

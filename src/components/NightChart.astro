@@ -1,0 +1,95 @@
+---
+import type { Night } from "../scripts/night-chart";
+import { fmtDuration } from "../scripts/night-chart";
+interface Props { night: Night; animate?: boolean; picker?: boolean; id?: string }
+const { night, animate = false, picker = false, id = "night" } = Astro.props;
+const dateLabel = new Date(night.day + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+const summary = `One night of James's sleep, ${dateLabel}: ${fmtDuration(night.sleepMin)} asleep, average heart rate ${night.avgHr} beats per minute, lowest ${night.lowHr}, average HRV ${night.avgHrv} milliseconds.`;
+---
+<figure class="night wide" id={id} data-night={JSON.stringify(night)} data-animate={animate ? "1" : undefined} data-picker={picker ? "1" : undefined}>
+  <div class="night-head">
+    <p class="night-title">
+      {picker ? (
+        <label class="picker">Night of
+          <select data-picker disabled><option>{dateLabel}</option></select>
+        </label>
+      ) : <>Night of <span data-out="date">{dateLabel}</span></>}
+    </p>
+    <dl class="readout-row" aria-live="polite">
+      <div><dt>Into sleep</dt><dd class="readout" data-out="time">—</dd></div>
+      <div class="hr"><dt>Heart rate</dt><dd><span class="readout" data-out="hr">—</span> <small>bpm</small></dd></div>
+      <div class="hrv"><dt>HRV</dt><dd><span class="readout" data-out="hrv">—</span> <small>ms</small></dd></div>
+      <div><dt>Stage</dt><dd data-out="stage">—</dd></div>
+    </dl>
+  </div>
+  <div class="well night-well">
+    <canvas role="img" aria-label={summary}></canvas>
+  </div>
+  <input type="range" min="0" max={night.hr.length - 1} value="0" aria-label="Scrub through the night" />
+  <figcaption>
+    <span class="legend" aria-hidden="true">
+      <span class="key key-hr">Heart rate</span>
+      <span class="key key-hrv">Heart-rate variability</span>
+      <span class="key key-stage">Sleep stage</span>
+      <span class="key key-move">Movement</span>
+    </span>
+    Recorded by the ring I wear every night, with readings every five minutes and movement every thirty seconds. Drag across the chart, or use the slider, to read any moment.
+  </figcaption>
+</figure>
+
+<style>
+  .night { margin: 0 0 2rem; }
+  .night-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 0.75rem 2rem; margin-bottom: 0.6rem; }
+  .night-title { margin: 0; font-weight: 700; }
+  .picker { font-size: inherit; font-weight: 700; display: inline-flex; gap: 0.5rem; align-items: center; }
+  .readout-row { display: flex; gap: 1.6rem; margin: 0; flex-wrap: wrap; }
+  .readout-row div { min-width: 4.5rem; }
+  .readout-row dt { font-size: var(--step--1); color: var(--ink-soft); }
+  .readout-row dd { margin: 0; font-size: var(--step-1); font-weight: 700; line-height: 1.2; }
+  .readout-row .hr dd { color: var(--pen); }
+  .readout-row .hrv dd { color: var(--hrv); }
+  .night-well { height: clamp(220px, 32vw, 320px); position: relative; }
+  canvas { width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: ew-resize; }
+  input[type="range"] { margin: 0.6rem 0 0; }
+  .key { white-space: nowrap; }
+  .key::before { content: ""; display: inline-block; width: 1.1em; height: 0; vertical-align: middle; margin-right: 0.35em; border-top: 2.25px solid; }
+  .key + .key::after { content: none; }
+  .key-hr::before { border-color: var(--pen); }
+  .key-hrv::before { border: 0; height: 0.7em; background: var(--hrv); opacity: 0.3; }
+  .key-stage::before { border-color: var(--ink); border-top-width: 1.5px; }
+  .key-move::before { border-color: var(--graphite); border-top-width: 4px; width: 0.35em; }
+  .key { margin-right: 0.9rem; }
+  .legend { display: flex; flex-wrap: wrap; margin-bottom: 0.25rem; color: var(--ink); }
+</style>
+
+<script>
+  import { mountNightChart, type Night, type Moment } from "../scripts/night-chart";
+
+  for (const el of document.querySelectorAll<HTMLElement>("figure.night")) {
+    const night: Night = JSON.parse(el.dataset.night!);
+    const chart = mountNightChart(el, night, {
+      animate: el.dataset.animate === "1",
+      onMoment: (m: Moment, n: Night) => {
+        const detail = { moment: m, night: { avgHr: n.avgHr, avgHrv: n.avgHrv, day: n.day } };
+        el.dataset.moment = JSON.stringify(detail); // for listeners that mount later
+        el.dispatchEvent(new CustomEvent("moment", { detail, bubbles: true }));
+      },
+    });
+
+    if (el.dataset.picker === "1") {
+      const select = el.querySelector<HTMLSelectElement>("select[data-picker]")!;
+      fetch("/data/nights.json").then((r) => r.json()).then((nights: Night[]) => {
+        select.innerHTML = "";
+        for (const n of [...nights].reverse()) {
+          const o = document.createElement("option");
+          o.value = n.day;
+          o.textContent = new Date(n.day + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+          if (n.day === night.day) o.selected = true;
+          select.append(o);
+        }
+        select.disabled = false;
+        select.addEventListener("change", () => chart.setNight(nights.find((n) => n.day === select.value)!));
+      });
+    }
+  }
+</script>

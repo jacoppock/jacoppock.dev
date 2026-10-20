@@ -1,14 +1,26 @@
 ---
+import "@fontsource-variable/atkinson-hyperlegible-next";
+import "@fontsource-variable/atkinson-hyperlegible-mono";
+import "../styles/global.css";
+
 interface Props { title?: string; description?: string }
 const {
   title,
-  description = "James Coppock — applied ML scientist building systems that turn messy healthcare signals into decisions people can trust.",
+  description = "James Coppock is an applied ML scientist who builds systems that turn messy healthcare signals, from heartbeats and MRIs to payer contracts, into decisions people can trust.",
 } = Astro.props;
-const fullTitle = title ? `${title} · James Coppock` : "James Coppock";
+const fullTitle = title ? `${title} | James Coppock` : "James Coppock, applied ML scientist";
 const nav = [
   ["/work", "Work"], ["/lab", "Lab"], ["/research", "Research"],
-  ["/writing", "Writing"], ["/life", "Off the clock"], ["/about", "About"], ["/contact", "Contact"],
+  ["/writing", "Writing"], ["/life", "Off the clock"], ["/about", "About"],
 ];
+const here = Astro.url.pathname.replace(/\/$/, "") || "/";
+const person = {
+  "@context": "https://schema.org", "@type": "Person",
+  name: "James A. Coppock", url: "https://jacoppock.dev",
+  jobTitle: "Senior AI/ML Applied Scientist", worksFor: { "@type": "Organization", name: "Infinia ML" },
+  alumniOf: { "@type": "CollegeOrUniversity", name: "Duke University" },
+  sameAs: ["https://github.com/jacoppock", "https://scholar.google.com/citations?user=aUYi9_IAAAAJ"],
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -19,26 +31,29 @@ const nav = [
     <meta name="description" content={description} />
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <link rel="icon" href="/favicon.png" />
+    <meta name="theme-color" content="#eef2e7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#17212b" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <style>
-      /* Phase 1 "ugly draft": readable defaults only. Design comes in Phase 3. */
-      body { max-width: 42rem; margin: 2rem auto; padding: 0 1rem; font: 17px/1.55 Georgia, serif; color: #1a1a1a; background: #fbfaf7; }
-      nav a { margin-right: .75rem; }
-      .tk { background: #fff3b0; }
-      .draft { border: 2px dashed #c33; padding: .5rem 1rem; }
-      footer { margin-top: 4rem; font-size: .85rem; color: #666; }
-    </style>
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
   </head>
   <body>
-    <header>
-      <a href="/"><strong>James Coppock</strong></a>
-      <nav>{nav.map(([href, label]) => <a href={href}>{label}</a>)}</nav>
-    </header>
-    <main><slot /></main>
-    <footer>
-      <p>Draft v2 · <a href="/now">Now</a> · <a href="/changelog">Changelog</a> · <a href="/cv">CV</a></p>
-      <p>Highlighted text marked <span class="tk">[TK]</span> is a placeholder to be filled in.</p>
-    </footer>
+    <div class="frame">
+      <header class="site-header">
+        <a class="site-name" href="/" aria-current={here === "/" ? "page" : undefined}>James Coppock</a>
+        <nav class="site-nav" aria-label="Main">
+          {nav.map(([href, label]) => <a href={href} aria-current={here.startsWith(href) ? "page" : undefined}>{label}</a>)}
+        </nav>
+      </header>
+      <main class="page"><slot /></main>
+      <footer class="site-footer">
+        <span>Durham, North Carolina</span>
+        <nav aria-label="Footer">
+          <a href="/now">Now</a><a href="/changelog">Changelog</a><a href="/cv">CV</a><a href="/contact">Contact</a>
+        </nav>
+      </footer>
+    </div>
   </body>
 </html>

@@ -1,0 +1,133 @@
+---
+// Opt-in only: the camera is never requested until the visitor presses Start.
+---
+<section class="cam wide" aria-labelledby="cam-title">
+  <div class="cam-text inset">
+    <h2 id="cam-title">Optional: try it with your own pulse</h2>
+    <p>If you'd like, your camera can do what the ring does. Cover your phone's rear camera with a fingertip, or sit still with your face lit evenly in front of a webcam. The camera turns on only when you press Start, and it turns off when you press Stop or leave the page. Everything is processed in this browser tab; no video is recorded or sent anywhere.</p>
+  </div>
+  <div class="cam-row inset">
+    <div role="group" aria-label="Camera mode" class="cam-mode">
+      <button type="button" aria-pressed="true" data-mode="finger">Fingertip on camera</button>
+      <button type="button" aria-pressed="false" data-mode="face">Face to webcam</button>
+    </div>
+    <button type="button" data-cam="toggle">Start camera</button>
+  </div>
+  <p class="cam-status inset" role="status" data-cam="status">Camera is off.</p>
+  <div class="cam-grid" hidden data-cam="live">
+    <video playsinline muted aria-hidden="true"></video>
+    <div class="well cam-well"><canvas role="img" aria-label="Your live pulse signal"></canvas></div>
+    <p class="cam-bpm"><span class="readout" data-cam="bpm">—</span> <small>bpm, estimated</small></p>
+  </div>
+  <p class="inset"><small>This is a demonstration, not a medical device. Camera pulse readings are noisy, need good light and stillness, and are known to be less accurate on darker skin tones.</small></p>
+</section>
+
+<style>
+  .cam { margin: 3rem 0 2rem; }
+  .cam-text { max-width: var(--measure); }
+  .cam-row { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; align-items: center; }
+  .cam-mode { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .cam-status { margin-block: 0.75rem; color: var(--ink-soft); font-size: var(--step--1); }
+  .cam-grid { display: grid; grid-template-columns: 96px 1fr auto; gap: 1rem; align-items: center; }
+  .cam-grid[hidden] { display: none; }
+  video { width: 96px; height: 72px; object-fit: cover; border: 1.5px solid var(--ink); transform: scaleX(-1); background: var(--paper-deep); }
+  .cam-well { height: 120px; }
+  canvas { width: 100%; height: 100%; display: block; }
+  .cam-bpm { margin: 0; font-size: var(--step-2); font-weight: 800; color: var(--pen); white-space: nowrap; }
+  @media (max-width: 40rem) { .cam-grid { grid-template-columns: 72px 1fr; } .cam-bpm { grid-column: 1 / -1; } }
+</style>
+
+<script>
+  import { bandpass, detectBeats, bpmFromPeaks } from "../scripts/ppg";
+
+  const root = document.querySelector<HTMLElement>(".cam")!;
+  const $ = (k: string) => root.querySelector<HTMLElement>(`[data-cam=${k}]`)!;
+  const toggle = $("toggle") as HTMLButtonElement, status = $("status"), live = $("live");
+  const video = root.querySelector("video")!;
+  const canvas = root.querySelector("canvas")!, ctx = canvas.getContext("2d")!;
+  const sampler = document.createElement("canvas"); sampler.width = 40; sampler.height = 30;
+  const sctx = sampler.getContext("2d", { willReadFrequently: true })!;
+  const css = (n: string) => getComputedStyle(root).getPropertyValue(n).trim();
+  let mode: "finger" | "face" = "finger";
+  let stream: MediaStream | null = null, raf = 0;
+  const samples: { t: number; v: number }[] = [];
+  const WINDOW = 12; // seconds of history
+
+  for (const b of root.querySelectorAll<HTMLButtonElement>("[data-mode]")) {
+    b.addEventListener("click", () => {
+      mode = b.dataset.mode as typeof mode;
+      for (const o of root.querySelectorAll("[data-mode]")) o.setAttribute("aria-pressed", String(o === b));
+      if (stream) { stop(); start(); }
+    });
+  }
+
+  async function start() {
+    if (!navigator.mediaDevices?.getUserMedia) { status.textContent = "This browser can't use a camera here. The rest of the page works without it."; return; }
+    status.textContent = "Asking for camera permission…";
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode === "finger" ? "environment" : "user", width: 320, height: 240 }, audio: false });
+    } catch {
+      status.textContent = "Camera permission wasn't granted, so the camera stays off. Everything above still works without it.";
+      return;
+    }
+    const track = stream.getVideoTracks()[0];
+    if (mode === "finger") { try { await track.applyConstraints({ advanced: [{ torch: true } as MediaTrackConstraintSet] }); } catch {} }
+    video.srcObject = stream; await video.play();
+    live.hidden = false; toggle.textContent = "Stop camera";
+    status.textContent = mode === "finger" ? "Hold your fingertip gently over the camera and keep still…" : "Keep your face still and evenly lit…";
+    samples.length = 0;
+    loop();
+  }
+
+  function stop() {
+    cancelAnimationFrame(raf);
+    stream?.getTracks().forEach((t) => t.stop()); stream = null;
+    video.srcObject = null; live.hidden = true; toggle.textContent = "Start camera";
+    status.textContent = "Camera is off.";
+  }
+
+  function loop() {
+    raf = requestAnimationFrame(loop);
+    if (video.readyState < 2) return;
+    sctx.drawImage(video, 0, 0, 40, 30);
+    const d = sctx.getImageData(mode === "face" ? 12 : 0, mode === "face" ? 4 : 0, mode === "face" ? 16 : 40, mode === "face" ? 10 : 30).data;
+    let sum = 0; const ch = mode === "finger" ? 0 : 1; // red through a fingertip, green on a face
+    for (let i = ch; i < d.length; i += 4) sum += d[i];
+    const now = performance.now() / 1000;
+    samples.push({ t: now, v: sum / (d.length / 4) });
+    while (samples.length && samples[0].t < now - WINDOW) samples.shift();
+    drawAndEstimate();
+  }
+
+  function drawAndEstimate() {
+    if (samples.length < 30) return;
+    // Resample to a steady 30 Hz before filtering.
+    const fs = 30, t0 = samples[0].t, t1 = samples[samples.length - 1].t, n = Math.floor((t1 - t0) * fs);
+    if (n < fs * 3) return;
+    const x = new Float64Array(n); let j = 0;
+    for (let i = 0; i < n; i++) {
+      const t = t0 + i / fs;
+      while (j + 1 < samples.length - 1 && samples[j + 1].t < t) j++;
+      const a = samples[j], b = samples[j + 1] ?? a, f = b.t > a.t ? (t - a.t) / (b.t - a.t) : 0;
+      x[i] = -(a.v + (b.v - a.v) * f);
+    }
+    const y = bandpass(x, 0.7, 3.5, fs);
+    const ready = (t1 - t0) > 6;
+    const bpm = ready ? bpmFromPeaks(detectBeats(y, fs).filter((p) => p > fs), fs) : null;
+    $("bpm").textContent = bpm ? String(Math.round(bpm)) : "—";
+    if (ready) status.textContent = bpm ? "Reading your pulse. Hold still for a steadier number." : "Can't find a steady pulse yet. Try more light and less movement.";
+
+    const dpr = window.devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+    if (canvas.width !== Math.round(w * dpr)) { canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+    const start = Math.min(fs, n - 1);
+    let mn = Infinity, mx = -Infinity; for (let i = start; i < n; i++) { mn = Math.min(mn, y[i]); mx = Math.max(mx, y[i]); }
+    ctx.strokeStyle = css("--pen"); ctx.lineWidth = 2; ctx.beginPath();
+    for (let i = start; i < n; i++) { const xx = ((i - start) / (n - start)) * w, yy = 8 + (1 - (y[i] - mn) / (mx - mn || 1)) * (h - 16); i === start ? ctx.moveTo(xx, yy) : ctx.lineTo(xx, yy); }
+    ctx.stroke();
+  }
+
+  toggle.addEventListener("click", () => (stream ? stop() : start()));
+  addEventListener("pagehide", stop);
+  document.addEventListener("visibilitychange", () => { if (document.hidden && stream) stop(); });
+</script>

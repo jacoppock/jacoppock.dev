@@ -4,6 +4,8 @@ import "@fontsource-variable/atkinson-hyperlegible-mono";
 import "../styles/global.css";
 import { PAGES, ogPath } from "../lib/pages";
 import { SHOW_UNFINISHED } from "../lib/env";
+import { getCollection } from "astro:content";
+const hasWriting = (await getCollection("writing")).some((e) => SHOW_UNFINISHED || e.data.status !== "draft");
 
 interface Props { title?: string; description?: string }
 const {
@@ -11,10 +13,11 @@ const {
   description = "James Coppock is an applied ML scientist who builds systems that turn messy healthcare signals, from heartbeats and MRIs to payer contracts, into decisions people can trust.",
 } = Astro.props;
 const fullTitle = title ? `${title} | James Coppock` : "James Coppock, applied ML scientist";
-const nav = [
+const navAll = [
   ["/work", "Work"], ["/lab", "Lab"], ["/research", "Research"],
   ["/writing", "Writing"], ["/life", "Off the clock"], ["/about", "About"],
-].filter(([href]) => SHOW_UNFINISHED || href !== "/writing");
+];
+const nav = navAll.filter(([href]) => hasWriting || href !== "/writing");
 const here = Astro.url.pathname.replace(/\/$/, "") || "/";
 const ogImage = new URL(PAGES[here] ? ogPath(here) : ogPath("/"), Astro.site);
 const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;

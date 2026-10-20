@@ -2,14 +2,26 @@
 import Base from "../layouts/Base.astro";
 import NightChart from "../components/NightChart.astro";
 import night from "../data/featured-night.json";
+import pubs from "../data/publications.json";
+import { getCollection } from "astro:content";
+import { SHOW_UNFINISHED } from "../lib/env";
+const essays = (await getCollection("writing")).filter((e) => SHOW_UNFINISHED || e.data.status !== "draft")
+  .sort((a, b) => b.data.date.localeCompare(a.data.date));
 ---
 <Base>
-  <h1 class="hero-title">I build ML systems that turn messy healthcare signals into decisions people can trust.</h1>
+  <h1 class="hero-title">I lead applied AI teams that turn messy healthcare signals into decisions people can trust.</h1>
+  <p class="role">Manager, AI/ML Applied Science at <b>Infinia ML</b>. I lead the teams behind ContractIQ and Pricing &amp; Scoring.</p>
+  <dl class="creds">
+    <div><dt>Trained as</dt><dd>PhD, Biomedical Engineering, Duke</dd></div>
+    <div><dt>Published</dt><dd>{pubs.length} peer-reviewed papers, 1 US patent</dd></div>
+    <div><dt>Shipped</dt><dd>Wearable, sports-sensing and healthcare AI products</dd></div>
+    {SHOW_UNFINISHED && <div><dt>Impact</dt><dd class="tk">[TK: one approved number, e.g. contracts modeled or team size]</dd></div>}
+  </dl>
 
   <NightChart night={night} animate />
 
   <p class="lede">That's my heart, asleep. Somewhere between the ring on my finger and this chart, a noisy flicker of light became a heart rate you can read. I've spent my career on that kind of step, from heartbeats and spine MRIs to the payer contracts that decide what care is paid.</p>
-  <p>I'm Manager of AI/ML Applied Science at Infinia ML, the AI arm of Aspirion, where I lead the ContractIQ and Pricing & Scoring teams. Before that I led Data Science & AI at Bionic Health, and did a PhD in Biomedical Engineering at Duke. <a href="/lab/pulse">See how the heartbeat gets out of the noise</a>.</p>
+  <p>Today that means leading the applied-science team at Infinia ML, the AI arm of Aspirion, where we turn dense payer contracts into reimbursement logic people can audit. Before that I led Data Science &amp; AI at Bionic Health, and did a PhD in Biomedical Engineering at Duke. <a href="/lab/pulse">See how the heartbeat gets out of the noise</a>.</p>
 
   <h2>Three signals</h2>
 
@@ -27,15 +39,33 @@ import night from "../data/featured-night.json";
 
   <p class="note">Infinia ML</p>
   <div class="signal">
-    <h3><a href="/work">The bill</a></h3>
+    <h3><a href="/work/contractiq">The bill</a></h3>
     <p>ContractIQ reads payer contracts and works out what each claim should pay, so underpayments get caught and rates get negotiated with evidence.</p>
   </div>
+
+  {essays.length > 0 && (
+    <>
+      <h2>Writing</h2>
+      {essays.slice(0, 2).map((e) => (
+        <div class="signal">
+          <h3><a href={`/writing/${e.id}`}>{e.data.title}</a>{e.data.status === "draft" && <span class="tk"> [draft]</span>}</h3>
+          <p>{e.data.summary}</p>
+        </div>
+      ))}
+    </>
+  )}
 
   <p class="next"><a href="/work">Read the case studies</a>, grab the <a href="/cv">CV</a>, or <a href="/contact">get in touch</a>.</p>
 </Base>
 
 <style>
-  .hero-title { max-width: 22ch; margin-top: 0.5rem; }
+  .hero-title { max-width: 25ch; margin-top: 0.25rem; margin-bottom: 0.4em; font-size: clamp(2rem, 1.1rem + 2.7vw, 3.05rem); }
+  .role { font-size: var(--step-1); margin-bottom: 1rem; }
+  .role b { font-weight: 750; }
+  .creds { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; margin: 0 0 1.75rem; padding-top: 0.9rem; border-top: 1.5px solid var(--ink); }
+  .creds dt { font-size: var(--step--1); color: var(--ink-soft); }
+  .creds dd { margin: 0; font-weight: 700; font-size: var(--step--1); }
+  @media (min-width: 64rem) { .creds { max-width: none; grid-column: 2 / -1; } }
   .lede { font-size: var(--step-1); line-height: 1.5; }
   .signal h3 { margin-top: 0; }
   .signal { margin-bottom: 1.5rem; }

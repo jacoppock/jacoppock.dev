@@ -1,14 +1,30 @@
 ---
-import { SHOW_UNFINISHED } from "../lib/env";
 import Base from "../layouts/Base.astro";
+import { getCollection } from "astro:content";
+import { SHOW_UNFINISHED } from "../lib/env";
+const essays = (await getCollection("writing")).filter((e) => SHOW_UNFINISHED || e.data.status !== "draft")
+  .sort((a, b) => b.data.date.localeCompare(a.data.date));
+const fmt = (d: string) => new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "long", year: "numeric" });
 ---
-<Base title="Writing">
-  {SHOW_UNFINISHED ? (<>
+<Base title="Writing" description="Notes on building ML for healthcare and leading applied AI teams.">
   <h1>Writing</h1>
-  <p>Notes on building ML systems in healthcare, leading ML teams, and turning models into products.</p>
-  <ul>
-    <li><span class="tk">[TK: first essay. Candidate: "Evaluate on dollars, not just accuracy."]</span></li>
-    <li><span class="tk">[TK: "How I built this site," at launch]</span></li>
-  </ul>
-</>) : (<><h1>Writing</h1><p>Coming soon.</p></>)}
+  {essays.length ? (
+    <>
+      <p class="lede">Notes on building ML for healthcare, and on leading the teams that do it.</p>
+      {essays.map((e) => (
+        <>
+          <p class="note">{fmt(e.data.date)}</p>
+          <article class="entry">
+            <h2><a href={`/writing/${e.id}`}>{e.data.title}</a>{e.data.status === "draft" && <span class="tk"> [draft]</span>}</h2>
+            <p>{e.data.summary}</p>
+          </article>
+        </>
+      ))}
+    </>
+  ) : <p>Coming soon.</p>}
 </Base>
+<style>
+  .lede { font-size: var(--step-1); }
+  .entry h2 { margin-top: 0; font-size: var(--step-1); }
+  @media (max-width: 63.99rem) { .note { margin: 1.25rem 0 0.2rem; } }
+</style>

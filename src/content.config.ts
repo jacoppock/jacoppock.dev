@@ -27,4 +27,14 @@ const photos = defineCollection({
   }),
 });
 
-export const collections = { work, photos };
+const writing = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/writing" }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    date: z.string(),
+    status: z.enum(["published", "draft"]).default("draft"),
+  }),
+});
+
+export const collections = { work, photos, writing };

@@ -1,0 +1,15 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+const photos = await getCollection("photos");
+---
+<Base title="Photography">
+  <h1>Photography</h1>
+  <p>To add a photo, drop a file in <code>src/content/photos/</code>. Placeholders are marked until they're replaced.</p>
+  {photos.map((p) => (
+    <figure>
+      <img src={p.data.image} alt={p.data.placeholder ? `Placeholder image: ${p.data.title}` : p.data.title} width="1200" height="800" loading="lazy" style="max-width:100%;height:auto" />
+      <figcaption><strong>{p.data.title}</strong>{p.data.placeholder && <span class="tk"> [placeholder]</span>}: {p.data.story}</figcaption>
+    </figure>
+  ))}
+</Base>

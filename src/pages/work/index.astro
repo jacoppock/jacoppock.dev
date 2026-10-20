@@ -1,0 +1,19 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+import { isVisible } from "../../lib/published";
+const items = (await getCollection("work")).filter(isVisible).sort((a, b) => a.data.order - b.data.order);
+---
+<Base title="Work">
+  <h1>Work</h1>
+  <p>Each case study follows the same shape: problem, my role, approach, outcome, and what I'd do differently.</p>
+  <ul>
+    {items.map((w) => (
+      <li>
+        <a href={`/work/${w.id}`}><strong>{w.data.title}</strong></a>, {w.data.org} · {w.data.years}
+        {w.data.status === "draft" && <span class="tk"> [DRAFT: hidden in production]</span>}
+        <br />{w.data.summary}
+      </li>
+    ))}
+  </ul>
+</Base>

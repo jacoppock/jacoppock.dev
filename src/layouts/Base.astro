@@ -1,0 +1,44 @@
+---
+interface Props { title?: string; description?: string }
+const {
+  title,
+  description = "James Coppock — applied ML scientist building systems that turn messy healthcare signals into decisions people can trust.",
+} = Astro.props;
+const fullTitle = title ? `${title} · James Coppock` : "James Coppock";
+const nav = [
+  ["/work", "Work"], ["/lab", "Lab"], ["/research", "Research"],
+  ["/writing", "Writing"], ["/life", "Off the clock"], ["/about", "About"], ["/contact", "Contact"],
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="icon" href="/favicon.png" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <style>
+      /* Phase 1 "ugly draft": readable defaults only. Design comes in Phase 3. */
+      body { max-width: 42rem; margin: 2rem auto; padding: 0 1rem; font: 17px/1.55 Georgia, serif; color: #1a1a1a; background: #fbfaf7; }
+      nav a { margin-right: .75rem; }
+      .tk { background: #fff3b0; }
+      .draft { border: 2px dashed #c33; padding: .5rem 1rem; }
+      footer { margin-top: 4rem; font-size: .85rem; color: #666; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/"><strong>James Coppock</strong></a>
+      <nav>{nav.map(([href, label]) => <a href={href}>{label}</a>)}</nav>
+    </header>
+    <main><slot /></main>
+    <footer>
+      <p>Draft v2 · <a href="/now">Now</a> · <a href="/changelog">Changelog</a> · <a href="/cv">CV</a></p>
+      <p>Highlighted text marked <span class="tk">[TK]</span> is a placeholder to be filled in.</p>
+    </footer>
+  </body>
+</html>

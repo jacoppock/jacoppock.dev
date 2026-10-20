@@ -1,0 +1,24 @@
+---
+import Base from "../../layouts/Base.astro";
+const show = import.meta.env.DEV;
+---
+<Base title={show ? "ContractIQ Impact Explorer" : "Coming soon"}>
+  {show ? (
+    <>
+      <p class="draft">Draft: awaiting employer approval. Excluded from production.</p>
+      <h1>ContractIQ Impact Explorer</h1>
+      <p><strong>Illustrative model, not the ContractIQ interface.</strong> All data is synthetic, and defaults come from published industry benchmarks.</p>
+      <h2>1 · Pick a health system</h2>
+      <p><span class="tk">[presets: Community hospital · Regional system · Academic medical center; sliders: net patient revenue, payer contracts, claim volume]</span></p>
+      <h2>2 · Follow one claim</h2>
+      <p>Contract in → terms understood → expected payment → variance flagged → recovered. <span class="tk">[animated pipeline with one synthetic clause]</span></p>
+      <h2>3 · Change the assumptions</h2>
+      <p><span class="tk">[underpayment rate · recoverable share · analyst hours per review · time to model a rate change]</span></p>
+      <h2>4 · Impact</h2>
+      <p><span class="tk">[$ identified and recovered per year · analyst hours returned · time to answer a rate question · contracts monitored]</span></p>
+      <p><span class="tk">[toggle: revenue-cycle team / finance leaders / Aspirion] [drawer: show the math]</span></p>
+    </>
+  ) : (
+    <><h1>Coming soon</h1><p><a href="/lab">← Lab</a></p></>
+  )}
+</Base>

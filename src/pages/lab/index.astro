@@ -1,0 +1,13 @@
+---
+import Base from "../../layouts/Base.astro";
+const showContract = import.meta.env.DEV;
+---
+<Base title="Lab">
+  <h1>Lab</h1>
+  <p>Explorable explanations: small instruments you can poke at. Each one has a guided path, a methods note and citations.</p>
+  <ul>
+    <li><a href="/lab/pulse"><strong>Pulse</strong></a>: from raw light to heartbeat, using a night of my own wearable data.</li>
+    <li><a href="/lab/disc"><strong>The Disc</strong></a>: watch a spinal disc deform under load, from my Duke research.</li>
+    {showContract && <li><a href="/lab/contract"><strong>ContractIQ Impact Explorer</strong></a>: what contract intelligence is worth to a health system. <span class="tk">[DRAFT]</span></li>}
+  </ul>
+</Base>

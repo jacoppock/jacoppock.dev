@@ -1,0 +1,18 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection, render } from "astro:content";
+import { isVisible } from "../../lib/published";
+export async function getStaticPaths() {
+  const items = (await getCollection("work")).filter(isVisible);
+  return items.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+<Base title={entry.data.title} description={entry.data.summary}>
+  {entry.data.status === "draft" && <p class="draft">Draft: awaiting employer approval. This page is excluded from production builds.</p>}
+  <h1>{entry.data.title}</h1>
+  <p><strong>{entry.data.role}</strong>, {entry.data.org} · {entry.data.years}</p>
+  <Content />
+  <p><a href="/work">← All work</a></p>
+</Base>

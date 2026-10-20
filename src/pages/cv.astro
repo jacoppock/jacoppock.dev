@@ -1,21 +1,73 @@
 ---
 import Base from "../layouts/Base.astro";
+const jobs = [
+  { title: "Senior AI/ML Applied Scientist", org: "Infinia ML, the AI arm of Aspirion", when: "January 2025 to present",
+    points: [
+      "Lead the ContractIQ and Pricing & Scoring teams.",
+      "Shaped ContractIQ from its earliest design to production: a contract-intelligence platform that turns payer contracts into structured, auditable reimbursement logic, so providers can see what they should be paid and catch underpayments.",
+      "Pricing & Scoring applies ML to denied and underpaid claims to surface the ones most worth pursuing on appeal.",
+      "Set technical direction across both, and build the team that brings AI rigor to revenue integrity.",
+    ] },
+  { title: "Independent consultant", org: "SolarUnsoiied", when: "November 2024 to January 2025", points: [] },
+  { title: "Principal Data Scientist, leading Data Science & AI", org: "Bionic Health (now Thrive Wellness)", when: "October 2023 to November 2024",
+    points: [
+      "Built an automated system that ingests multi-modal patient data (imaging, EHR, blood biomarkers, continuous glucose, blood pressure, sleep and heart rate) to produce personalized disease-risk profiles, including 30-year cardiovascular risk.",
+      "Developed a FHIR-compliant, agent-based generative-AI framework for real-time clinical decision support.",
+      "Built a retrieval-augmented assistant for patient onboarding and clinician-approved lifestyle guidance.",
+    ] },
+  { title: "ML Research Scientist, Medical Imaging", org: "Duke University", when: "January 2020 to September 2023",
+    points: [
+      "Built segmentation and registration models that track intervertebral disc structure, composition and function across MRI time points and sequences.",
+      "Developed and validated a diffeomorphic, unsupervised MR registration method for non-invasive, voxel-wise estimates of disc strain in vivo.",
+      "Supported NIH-funded projects (R01AR075399, R01AR074800) with experimental design and statistical analysis.",
+    ] },
+  { title: "Machine Learning Engineer, Wearable Biometrics", org: "Valencell", when: "October 2017 to October 2018",
+    points: [
+      "Developed deep-learning algorithms for real-time heart rate and blood pressure from wearable PPG sensors; contributed to a cuffless blood-pressure monitor that went to market.",
+      "Built ETL pipelines for training, testing and validating time-series models.",
+    ] },
+  { title: "Algorithm Engineer, Embedded Sensors", org: "Wilson Sporting Goods", when: "April 2017 to August 2017",
+    points: [
+      "Developed algorithms and data pipelines for the Wilson X line of connected footballs and basketballs.",
+      "Ran field studies with NFL and NCAA teams on next-generation analytics for athletes and coaches.",
+    ] },
+];
+const skills = ["Deep learning and computer vision", "Generative AI and LLM agents (LangGraph, LlamaIndex)", "Signal processing and sensor fusion", "Wearable algorithm development", "Computational statistics", "FHIR and clinical data", "MLOps: Kubernetes, Docker, ArgoCD, Terraform/Bicep", "PyTorch, TensorFlow, Python, R, SQL, C++ (ITK)", "AWS and Azure"];
 ---
-<Base title="CV">
-  <h1>CV</h1>
-  <p><span class="tk">[PDF download]</span></p>
+<Base title="CV" description="Curriculum vitae of James A. Coppock, PhD.">
+  <h1>James A. Coppock, PhD</h1>
+  <p class="lede">Applied scientist and ML leader, taking AI from research to production in high-stakes healthcare.</p>
+  <p><a href="mailto:j.avery.coppock@gmail.com">j.avery.coppock@gmail.com</a>, <a href="https://www.linkedin.com/in/jacoppock/">LinkedIn</a>, <a href="https://github.com/jacoppock">GitHub</a>, <a href="https://scholar.google.com/citations?user=aUYi9_IAAAAJ">Google Scholar</a>. <span class="tk">[PDF download, once the résumé is refreshed]</span></p>
+
   <h2>Experience</h2>
-  <ul>
-    <li><strong>Senior AI/ML Applied Scientist</strong>, Infinia ML (Aspirion), <span class="tk">[TK]</span>–present. Primary architect and technical owner of ContractIQ.</li>
-    <li><strong>Principal Data Scientist</strong>, Bionic Health, 2023–<span class="tk">[TK]</span></li>
-    <li><strong>ML Research Scientist, Medical Imaging</strong>, Duke University, 2020–2023</li>
-    <li><strong>Machine Learning Engineer, Wearable Algorithms</strong>, Valencell, 2017–2018</li>
-    <li><strong>Algorithm Engineer, Embedded Sensors</strong>, Wilson Sporting Goods, 2017</li>
-  </ul>
+  {jobs.map((j) => (
+    <>
+      <p class="note">{j.when}</p>
+      <section class="job">
+        <h3>{j.title}</h3>
+        <p class="org">{j.org}</p>
+        {j.points.length > 0 && <ul>{j.points.map((p) => <li>{p}</li>)}</ul>}
+      </section>
+    </>
+  ))}
+
   <h2>Education</h2>
   <ul>
-    <li><strong>PhD, Biomedical Engineering</strong>, Duke University, 2023</li>
-    <li><span class="tk">[TK: earlier degrees]</span></li>
+    <li><b>PhD, Biomedical Engineering</b>, Duke University, 2023</li>
+    <li><b>MS, Applied Neuromechanics</b>, University of North Carolina at Greensboro</li>
+    <li><b>BS, Biomedical Engineering</b>, Georgia Institute of Technology</li>
   </ul>
-  <p>Publications and patent: see <a href="/research">Research</a>.</p>
+
+  <h2>Skills</h2>
+  <ul class="skills">{skills.map((s) => <li>{s}</li>)}</ul>
+
+  <p>Publications, patent and honors are on the <a href="/research">Research</a> page.</p>
 </Base>
+<style>
+  .lede { font-size: var(--step-1); }
+  .job h3 { margin: 0; }
+  .org { color: var(--ink-soft); margin: 0 0 0.4rem; }
+  .job { margin-bottom: 1.5rem; }
+  @media (max-width: 63.99rem) { .note { margin: 1.25rem 0 0.2rem; } }
+  .skills { columns: 2 16rem; }
+</style>

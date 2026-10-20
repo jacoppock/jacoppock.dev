@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import NightChart from "../../components/NightChart.astro";
 import PulseLab from "../../components/PulseLab.astro";
 import CameraPulse from "../../components/CameraPulse.astro";
+import ActivityChart from "../../components/ActivityChart.astro";
 import night from "../../data/featured-night.json";
 ---
 <Base title="Pulse" description="From raw light to heartbeat: an explorable built on months of my own wearable data.">
@@ -22,10 +23,12 @@ import night from "../../data/featured-night.json";
     <li>Turn on motion cancellation. The accelerometer tells the algorithm what movement looks like, and it subtracts that from the light. This is the idea behind motion-tolerant wearables, the problem I worked on at Valencell.</li>
   </ol>
 
+  <ActivityChart />
+
   <CameraPulse />
 
   <h2>Methods</h2>
-  <p class="small">Data: Oura ring sleep sessions, heart rate and RMSSD every 5 minutes, movement every 30 seconds; clock times removed. Waveform: two-Gaussian pulse model per beat, beat intervals drawn from the recorded heart rate with spread set by RMSSD, breathing at the recorded rate. Processing: zero-phase Butterworth band-pass, normalized-LMS adaptive noise cancellation with the accelerometer as reference, peak detection with an adaptive threshold, heart rate from the median beat interval. All of it runs in your browser; <a href="https://github.com/jacoppock/jacoppock.dev/blob/main/src/scripts/ppg.ts">read the code</a>.</p>
+  <p class="small">Activities: Suunto watch recordings synced through Strava, with heart rate, cadence and elevation every 2 seconds (run) or 10 seconds (hike); GPS, place names and clock times removed. Data: Oura ring sleep sessions, heart rate and RMSSD every 5 minutes, movement every 30 seconds; clock times removed. Waveform: two-Gaussian pulse model per beat, beat intervals drawn from the recorded heart rate with spread set by RMSSD, breathing at the recorded rate. Processing: zero-phase Butterworth band-pass, normalized-LMS adaptive noise cancellation with the accelerometer as reference, peak detection with an adaptive threshold, heart rate from the median beat interval. All of it runs in your browser; <a href="https://github.com/jacoppock/jacoppock.dev/blob/main/src/scripts/ppg.ts">read the code</a>.</p>
 </Base>
 
 <style>

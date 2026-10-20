@@ -3,10 +3,13 @@ import Base from "../layouts/Base.astro";
 ---
 <Base title="About">
   <h1>About</h1>
-  <img src="/headshot.png" alt="James Coppock" width="160" height="160" style="border-radius:50%" />
-  <p>I'm James. I've spent my career on one kind of problem: taking a noisy signal and making it trustworthy enough to act on.</p>
-  <p>It started with motion: algorithms for sensors inside footballs at Wilson, then heart rate and blood pressure from wrist and ear sensors at Valencell. At Duke I moved inside the body, building deep-learning models that measure how spinal discs deform in MRI, which became my PhD in Biomedical Engineering. After that came clinical data science at Bionic Health. Now I'm a Senior AI/ML Applied Scientist at Infinia ML, the AI arm of Aspirion, where I architect ContractIQ, a system that follows healthcare all the way to the bill.</p>
-  <p>Increasingly my work is about more than models: setting technical direction, shaping product strategy, and helping teams build ML that holds up in the real world.</p>
-  <p>I live in Durham, NC, in a historic house we've been <a href="/life/restoration">restoring</a>. When I'm not working, I'm <a href="/life/photography">taking photos</a> or at a <a href="/life/hockey">Canes game</a>.</p>
-  <p><span class="tk">[TK: verify undergraduate/master's details for the CV]</span></p>
+  <img class="portrait" src="/headshot.png" alt="James Coppock" width="160" height="160" />
+  <p class="lede">I'm James, an applied scientist and ML leader. I take AI from research to production in high-stakes healthcare, where the answer has to be right and you have to be able to show why.</p>
+  <p>At Infinia ML, the AI arm of revenue-cycle company Aspirion, I lead the ContractIQ and Pricing & Scoring teams. I've shaped ContractIQ from its earliest design through to production. It turns complex payer contracts into structured, auditable reimbursement logic, so providers can see exactly what they should be paid and catch underpayments. Pricing & Scoring uses ML to find the denied and underpaid claims most worth appealing. Across both, my job is setting technical direction and building a team that brings real rigor to revenue integrity.</p>
+  <p>The thread runs back further than healthcare finance. I started with signals from motion: sensors inside footballs at Wilson, then heart rate and cuffless blood pressure from wearables at Valencell. My PhD at Duke moved inside the body, building deep-learning methods for MRI that measure how spinal discs respond to load. At Bionic Health (now Thrive Wellness), I led Data Science & AI, building pipelines that combined imaging, health records and wearable data into disease-risk predictions and decision support for clinicians.</p>
+  <p>I live in Durham, North Carolina, with my wife, in a century home we've been <a href="/life/restoration">restoring</a>. Off the clock I'm <a href="/life/training">training</a>, taking <a href="/life/photography">photos</a>, or in section 113 for a <a href="/life/hockey">Canes game</a>.</p>
 </Base>
+<style>
+  .portrait { border-radius: 50%; border: 1.5px solid var(--ink); }
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+</style>

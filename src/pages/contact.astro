@@ -3,11 +3,16 @@ import Base from "../layouts/Base.astro";
 ---
 <Base title="Contact">
   <h1>Contact</h1>
-  <p>I'm glad to hear about healthcare-AI problems, speaking, advising and collaborations.</p>
-  <ul>
-    <li>Email: <span class="tk">[TK: which address to publish]</span></li>
+  <p class="lede">I'm glad to hear about healthcare-AI problems, speaking, advising and collaborations.</p>
+  <ul class="links">
+    <li><a href="mailto:j.avery.coppock@gmail.com" data-umami-event="contact-email">j.avery.coppock@gmail.com</a></li>
+    <li><a href="https://www.linkedin.com/in/jacoppock/" data-umami-event="contact-linkedin">LinkedIn</a></li>
     <li><a href="https://github.com/jacoppock">GitHub</a></li>
-    <li>LinkedIn: <span class="tk">[TK: URL]</span></li>
     <li><a href="https://scholar.google.com/citations?user=aUYi9_IAAAAJ">Google Scholar</a></li>
   </ul>
 </Base>
+<style>
+  .lede { font-size: var(--step-1); }
+  .links { font-size: var(--step-1); list-style: none; padding: 0; }
+  .links li { margin-bottom: 0.4rem; }
+</style>

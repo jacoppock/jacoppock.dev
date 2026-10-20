@@ -39,6 +39,7 @@
 
 <script>
   import { bandpass, detectBeats, bpmFromPeaks } from "../scripts/ppg";
+  const track = (name: string) => (window as any).jtrack?.(name);
 
   const root = document.querySelector<HTMLElement>(".cam")!;
   const $ = (k: string) => root.querySelector<HTMLElement>(`[data-cam=${k}]`)!;
@@ -64,14 +65,15 @@
   async function start() {
     if (!navigator.mediaDevices?.getUserMedia) { status.textContent = "This browser can't use a camera here. The rest of the page works without it."; return; }
     status.textContent = "Asking for camera permission…";
+    track("camera-start");
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode === "finger" ? "environment" : "user", width: 320, height: 240 }, audio: false });
     } catch {
       status.textContent = "Camera permission wasn't granted, so the camera stays off. Everything above still works without it.";
       return;
     }
-    const track = stream.getVideoTracks()[0];
-    if (mode === "finger") { try { await track.applyConstraints({ advanced: [{ torch: true } as MediaTrackConstraintSet] }); } catch {} }
+    const videoTrack = stream.getVideoTracks()[0];
+    if (mode === "finger") { try { await videoTrack.applyConstraints({ advanced: [{ torch: true } as MediaTrackConstraintSet] }); } catch {} }
     video.srcObject = stream; await video.play();
     live.hidden = false; toggle.textContent = "Stop camera";
     status.textContent = mode === "finger" ? "Hold your fingertip gently over the camera and keep still…" : "Keep your face still and evenly lit…";

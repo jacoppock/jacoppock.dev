@@ -1,10 +1,10 @@
 ---
 title: "ContractIQ"
 org: "Infinia ML / Aspirion"
-role: "Primary architect & technical owner"
-years: "[TK]–present"
+role: "Lead, ContractIQ and Pricing & Scoring teams"
+years: "2025 to present"
 order: 1
-summary: "An AI/ML system that reads healthcare payer contracts and prices what each claim should pay, so underpayments get caught and rate decisions get made with evidence."
+summary: "A contract-intelligence platform that turns payer contracts into structured, auditable reimbursement logic, so providers can see what they should be paid and catch underpayments."
 status: draft
 ---
 
@@ -14,7 +14,7 @@ Hospitals sign hundreds of payer contracts, each with its own rate tables, carve
 
 ## My role
 
-I'm the primary architect and central technical owner of ContractIQ. I set its technical direction and design, and I work across product, operations and client teams on what it needs to do. <span class="tk">[TK: team size / scope, as approved]</span>
+I've shaped ContractIQ from its earliest design through to production, and I lead the ContractIQ and Pricing & Scoring teams. Pricing & Scoring applies ML to denied and underpaid claims to surface the ones most worth pursuing on appeal. Across both, I set technical direction and build the team. <span class="tk">[TK: team size, as approved]</span>
 
 ## What it helps us and our clients do
 

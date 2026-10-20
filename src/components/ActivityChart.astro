@@ -1,0 +1,170 @@
+---
+// Real activities from my watch (via Strava): heart rate, steps per minute and
+// elevation change. No GPS, no clock times. Data: /data/activities.json
+---
+<section class="act wide" aria-labelledby="act-title">
+  <div class="inset">
+    <h2 id="act-title">The real thing</h2>
+    <p>Everything above is rebuilt from summaries. Here are two real recordings from the watch on my wrist: a morning run at home, and a day hike nearly a kilometer down into the Grand Canyon and back up, where you can watch my heart rate climb with the trail. On the run, my heart beat about twice a second while my feet hit the ground almost three times a second. Both rhythms sit inside the band the filter keeps, which is why motion is so hard to remove.</p>
+  </div>
+  <div class="act-head">
+    <div class="presets" role="group" aria-label="Activity" data-act="choices"></div>
+    <dl class="act-readout" aria-live="polite">
+      <div><dt>Elapsed</dt><dd class="readout" data-out="t">—</dd></div>
+      <div class="hr"><dt>Heart rate</dt><dd><span class="readout" data-out="hr">—</span> <small>bpm</small></dd></div>
+      <div><dt>Steps</dt><dd><span class="readout" data-out="spm">—</span> <small>per min</small></dd></div>
+      <div class="el"><dt>Elevation</dt><dd><span class="readout" data-out="elev">—</span> <small>m</small></dd></div>
+    </dl>
+  </div>
+  <div class="well act-well"><canvas role="img" aria-label="Heart rate, steps per minute and elevation over the activity"></canvas></div>
+  <input type="range" min="0" max="1" value="0" aria-label="Scrub through the activity" />
+  <p class="legend small" aria-hidden="true"><span class="k k-hr">Heart rate, bpm</span><span class="k k-el">Elevation change</span><span class="k k-sp">Steps per minute (lower lane)</span><span>Gaps are rest stops.</span></p>
+  <div class="freq" aria-hidden="true">
+    <canvas class="freq-canvas"></canvas>
+  </div>
+  <p class="freq-caption small" data-out="freq" aria-live="polite"></p>
+</section>
+
+<style>
+  .act { margin: 3rem 0 2rem; }
+  .act-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem 2rem; align-items: end; margin: 1rem 0 0.6rem; }
+  .presets { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .act-readout { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 0; }
+  .act-readout dt { font-size: var(--step--1); color: var(--ink-soft); }
+  .act-readout dd { margin: 0; font-size: var(--step-1); font-weight: 700; }
+  .act-readout .hr dd { color: var(--pen); }
+  .act-readout .el dd { color: var(--hrv); }
+  .act-well { height: clamp(220px, 30vw, 300px); }
+  .act-well canvas { width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: ew-resize; }
+  input[type="range"] { margin-top: 0.6rem; }
+  .freq { height: 64px; margin-top: 1rem; }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; margin: 0.5rem 0 0; color: var(--ink); }
+  .k::before { content: ""; display: inline-block; width: 1.1em; vertical-align: middle; margin-right: 0.35em; border-top: 2px solid; }
+  .k-hr::before { border-color: var(--pen); }
+  .k-el::before { border: 0; height: 0.7em; background: var(--hrv); opacity: 0.3; }
+  .k-sp::before { border-color: var(--ink); border-top-width: 1.3px; }
+  .freq-canvas { width: 100%; height: 100%; display: block; }
+  .freq-caption { margin-top: 0.25rem; max-width: var(--measure); }
+</style>
+
+<script>
+  interface Activity { id: string; kind: string; title: string; date: string; step: number; hr: (number | null)[]; spm: (number | null)[]; speed: (number | null)[]; elev: (number | null)[]; avgHr: number; maxHr: number; minutes: number; distanceKm: number; climb: number }
+  const root = document.querySelector<HTMLElement>(".act")!;
+  const $ = (k: string) => root.querySelector<HTMLElement>(`[data-out=${k}]`)!;
+  const canvas = root.querySelector<HTMLCanvasElement>(".act-well canvas")!, ctx = canvas.getContext("2d")!;
+  const fcanvas = root.querySelector<HTMLCanvasElement>(".freq-canvas")!, fctx = fcanvas.getContext("2d")!;
+  const range = root.querySelector<HTMLInputElement>("input[type=range]")!;
+  const css = (n: string) => getComputedStyle(root).getPropertyValue(n).trim();
+  let acts: Activity[] = [], a: Activity, index = 0;
+
+  const fmtT = (s: number) => { const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60); return h ? `${h}h ${String(m).padStart(2, "0")}m` : `${m}m ${String(Math.floor(s % 60)).padStart(2, "0")}s`; };
+  const smooth = (arr: (number | null)[], r: number) => arr.map((v, i) => { if (v == null) return null; let s = 0, c = 0; for (let k = i - r; k <= i + r; k++) { const u = arr[k]; if (u != null) { s += u; c++; } } return s / c; });
+
+  function size(c: HTMLCanvasElement, g: CanvasRenderingContext2D) {
+    const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
+    if (c.width !== Math.round(w * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h); return [w, h];
+  }
+
+  function draw() {
+    const [w, h] = size(canvas, ctx), n = a.hr.length, font = getComputedStyle(root).fontFamily;
+    const padL = 46, padR = 14, padT = 12, padB = 22;
+    const x = (i: number) => padL + (i / (n - 1)) * (w - padL - padR);
+    const line = (arr: (number | null)[], lo: number, hi: number, top: number, hh: number, color: string, width: number, fill = false) => {
+      const y = (v: number) => top + hh - ((v - lo) / (hi - lo || 1)) * hh;
+      ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width; ctx.lineJoin = "round";
+      // Draw each unbroken run separately so pauses leave clean gaps.
+      let i = 0;
+      while (i < n) {
+        if (arr[i] == null) { i++; continue; }
+        const start = i; ctx.beginPath(); ctx.moveTo(x(i), y(arr[i] as number));
+        while (i < n && arr[i] != null) { ctx.lineTo(x(i), y(arr[i] as number)); i++; }
+        if (fill) { ctx.lineTo(x(i - 1), top + hh); ctx.lineTo(x(start), top + hh); ctx.closePath(); ctx.globalAlpha = 0.16; ctx.fill(); ctx.globalAlpha = 1; } else ctx.stroke();
+      }
+      return y;
+    };
+    const plotH = h - padT - padB;
+    const hrH = plotH * 0.68, gapH = plotH * 0.06, spH = plotH - hrH - gapH;
+    // Elevation: soft area behind the heart-rate lane
+    const ev = a.elev.filter((v): v is number => v != null);
+    line(a.elev, Math.min(...ev), Math.max(...ev) + 1, padT, hrH, css("--hrv"), 1, true);
+    // Heart rate: the pen
+    const hv = a.hr.filter((v): v is number => v != null);
+    const lo = Math.floor((Math.min(...hv) - 5) / 10) * 10, hi = Math.ceil((Math.max(...hv) + 5) / 10) * 10;
+    const yHr = line(a.hr, lo, hi, padT, hrH, css("--pen"), 2);
+    // Steps per minute: its own lane underneath
+    const spTop = padT + hrH + gapH;
+    const sp = smooth(a.spm, a.kind === "run" ? 2 : 6);
+    const svals = sp.filter((v): v is number => v != null);
+    const slo = Math.floor(Math.min(...svals) / 10) * 10, shi = Math.ceil(Math.max(...svals) / 10) * 10;
+    ctx.strokeStyle = css("--grid-major"); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(padL, spTop - gapH / 2); ctx.lineTo(w - padR, spTop - gapH / 2); ctx.stroke();
+    line(sp, slo, shi, spTop, spH, css("--ink"), 1.3);
+    // Axes
+    ctx.font = `600 11px ${font}`; ctx.fillStyle = css("--ink-soft"); ctx.textBaseline = "middle";
+    const step = hi - lo > 60 ? 20 : 10;
+    ctx.textAlign = "right"; for (let v = lo; v <= hi; v += step) ctx.fillText(String(v), padL - 6, yHr(v));
+    ctx.fillText(String(shi), padL - 6, spTop + 4); ctx.fillText(String(slo), padL - 6, spTop + spH - 4);
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    const total = (n - 1) * a.step, tick = total > 7200 ? 3600 : total > 1800 ? 600 : 300;
+    for (let t = 0; t <= total; t += tick) ctx.fillText(t === 0 ? "start" : tick >= 3600 ? `${t / 3600}h` : `${t / 60}m`, x(t / a.step), h - padB + 6);
+    // Cursor
+    const cx = x(index); ctx.strokeStyle = css("--ink"); ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT + plotH); ctx.stroke(); ctx.globalAlpha = 1;
+    const v = a.hr[index]; if (v != null) { ctx.fillStyle = css("--pen"); ctx.beginPath(); ctx.arc(cx, yHr(v), 4.5, 0, Math.PI * 2); ctx.fill(); }
+    drawFreq();
+  }
+
+  // Frequency strip: where the heart and the feet sit on a 0–4 Hz axis, with the filter's band shaded.
+  function drawFreq() {
+    const [w, h] = size(fcanvas, fctx), font = getComputedStyle(root).fontFamily;
+    const fx = (f: number) => 46 + (f / 4) * (w - 92);
+    fctx.fillStyle = css("--pen-soft"); fctx.fillRect(fx(0.5), 8, fx(4) - fx(0.5), 24);
+    fctx.strokeStyle = css("--ink"); fctx.lineWidth = 1; fctx.beginPath(); fctx.moveTo(fx(0), 32); fctx.lineTo(fx(4), 32); fctx.stroke();
+    fctx.font = `600 11px ${font}`; fctx.fillStyle = css("--ink-soft"); fctx.textAlign = "center"; fctx.textBaseline = "top";
+    for (let f = 0; f <= 4; f++) fctx.fillText(`${f} Hz`, fx(f), 38);
+    fctx.textAlign = "left"; fctx.fillText("band the filter keeps", fx(0.5) + 4, 10);
+    const hr = a.hr[index], sp = a.spm[index];
+    const mark = (f: number, color: string, label: string) => { fctx.fillStyle = color; fctx.beginPath(); fctx.moveTo(fx(f), 32); fctx.lineTo(fx(f) - 6, 20); fctx.lineTo(fx(f) + 6, 20); fctx.fill(); fctx.textAlign = "center"; fctx.fillText(label, fx(f), 52); };
+    if (hr) mark(hr / 60, css("--pen"), "heart");
+    if (sp) mark(sp / 60, css("--ink"), "steps");
+    $("freq").textContent = hr && sp
+      ? `Right now: heart at ${(hr / 60).toFixed(2)} Hz, steps at ${(sp / 60).toFixed(2)} Hz. ${Math.abs(hr - sp) < 15 ? "Almost the same rhythm, so a filter can't tell them apart." : "Both inside the band, so filtering alone can't separate them."}`
+      : "";
+  }
+
+  function setIndex(i: number) {
+    index = Math.max(0, Math.min(a.hr.length - 1, i)); range.value = String(index);
+    $("t").textContent = fmtT(index * a.step);
+    $("hr").textContent = a.hr[index] != null ? String(a.hr[index]) : "—";
+    $("spm").textContent = a.spm[index] != null ? String(a.spm[index]) : "—";
+    const e = a.elev[index]; $("elev").textContent = e != null ? `${e > 0 ? "+" : ""}${e}` : "—";
+    range.setAttribute("aria-valuetext", `${fmtT(index * a.step)} in: heart rate ${a.hr[index] ?? "no reading"}, ${a.spm[index] ?? "no"} steps per minute`);
+    draw();
+  }
+  function choose(act: Activity) {
+    a = act; range.max = String(act.hr.length - 1);
+    root.querySelectorAll("[data-id]").forEach((b) => b.setAttribute("aria-pressed", String((b as HTMLElement).dataset.id === act.id)));
+    // Start at the hardest sustained moment: the highest heart rate after the first tenth (skips start-up spikes).
+    const skip = Math.floor(act.hr.length / 10);
+    let best = skip; act.hr.forEach((v, i) => { if (i >= skip && v != null && v > (act.hr[best] ?? 0)) best = i; });
+    setIndex(best);
+  }
+
+  fetch("/data/activities.json").then((r) => r.json()).then((list: Activity[]) => {
+    acts = list;
+    const box = root.querySelector("[data-act=choices]")!;
+    for (const act of acts) {
+      const b = document.createElement("button"); b.type = "button"; b.dataset.id = act.id;
+      const d = new Date(act.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      b.textContent = `${act.kind === "run" ? "Run" : "Hike"}, ${d}: ${act.distanceKm} km`;
+      b.title = act.title;
+      b.addEventListener("click", () => { choose(act); (window as any).jtrack?.(`activity-${act.kind}`); }); box.append(b);
+    }
+    choose(acts.find((x) => x.kind === "run") ?? acts[0]);
+  });
+
+  const fromPointer = (e: PointerEvent) => { const r = canvas.getBoundingClientRect(); setIndex(Math.round(((e.clientX - r.left - 46) / (r.width - 60)) * (a.hr.length - 1))); };
+  canvas.addEventListener("pointerdown", (e) => { canvas.setPointerCapture(e.pointerId); fromPointer(e); });
+  canvas.addEventListener("pointermove", (e) => { if (e.buttons || e.pointerType === "mouse") fromPointer(e); });
+  range.addEventListener("input", () => setIndex(+range.value));
+  new ResizeObserver(() => a && draw()).observe(canvas);
+</script>

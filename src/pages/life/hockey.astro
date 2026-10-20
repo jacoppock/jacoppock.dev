@@ -1,10 +1,25 @@
 ---
 import Base from "../../layouts/Base.astro";
 ---
-<Base title="Hockey">
+<Base title="Hockey" description="On skates since age two; Carolina Hurricanes season-ticket member.">
   <h1>Hockey</h1>
-  <p>I learned to skate at two and played growing up. These days I'm an avid Carolina Hurricanes fan and a season-ticket member.</p>
-  <p><span class="tk">[childhood hockey photo]</span></p>
-  <h2>My season at Lenovo Center</h2>
-  <p><span class="tk">[original rink drawing with my seat view · games-attended log: date, opponent, result, one-line note, photo]</span></p>
+  <p class="lede">I learned to skate at two and played growing up. These days I watch from section 113 at Lenovo Center, where we've been Carolina Hurricanes season-ticket members for four seasons.</p>
+
+  <p class="note">June 2026</p>
+  <div class="cup">
+    <h2>Stanley Cup champions</h2>
+    <p>The Canes beat the Vegas Golden Knights to win the 2026 Stanley Cup, the second in franchise history.</p>
+    <p class="small"><span class="tk">[TK: a photo from the playoffs, and the game you'll never forget]</span></p>
+  </div>
+
+  <h2>Growing up on skates</h2>
+  <p><span class="tk">[TK: where you played, what position, and a childhood photo]</span></p>
+
+  <h2>Our season</h2>
+  <p>A log of the games we go to this season, one line each. <span class="tk">[TK: games list for src/data/games.json — date, opponent, result, one-line note]</span></p>
 </Base>
+<style>
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+  .cup h2 { margin-top: 0; }
+  .cup { border-left: 3px solid var(--pen); padding-left: 1rem; margin-top: 2rem; }
+</style>

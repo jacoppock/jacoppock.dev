@@ -1,18 +1,52 @@
 ---
 import Base from "../layouts/Base.astro";
+import pubs from "../data/publications.json";
+const first = pubs.filter((p) => p.first), co = pubs.filter((p) => !p.first);
 ---
-<Base title="Research">
+<Base title="Research" description="Papers, dissertation and patent: deep learning for medical imaging, spine biomechanics and wearable sensing.">
   <h1>Research</h1>
-  <p><a href="https://scholar.google.com/citations?user=aUYi9_IAAAAJ">Google Scholar</a> lists my work in computer vision, machine learning, medical imaging and wearable devices.</p>
+  <p class="lede">My PhD work at Duke built deep-learning methods to measure how living spinal discs deform and recover, using MRI. Full list on <a href="https://scholar.google.com/citations?user=aUYi9_IAAAAJ">Google Scholar</a>.</p>
+
   <h2>Dissertation</h2>
-  <ul><li>Coppock, J. A. <em>Development of Imaging-Based Models for Analyzing the Spatiotemporal Function of Intervertebral Discs.</em> PhD dissertation, Duke University, Biomedical Engineering, 2023. Advisor: Louis E. DeFrate.</li></ul>
-  <h2>Selected papers</h2>
-  <ul>
-    <li>Coppock, J. A., et al. "Increasing BMI increases lumbar intervertebral disc deformation following a treadmill walking stress test." <em>Journal of Biomechanics</em>, 2021.</li>
-    <li>"Resting supine for 45 minutes yields consistent baseline lumbar intervertebral disc height." <em>Annals of Biomedical Engineering</em>, 2025. (co-author)</li>
-    <li>"Predicting oxygen uptake responses during cycling at varied intensities using an artificial neural network." <em>Biomedical Human Kinetics</em>, 2019.</li>
-    <li><span class="tk">[TK: full list, DOIs, BibTeX]</span></li>
-  </ul>
+  <p><cite>Development of Imaging-Based Models for Analyzing the Spatiotemporal Function of Intervertebral Discs.</cite> PhD, Biomedical Engineering, Duke University, 2023. Advisor: Louis E. DeFrate.</p>
+
+  <h2>First-author papers</h2>
+  <ol class="pubs" reversed>
+    {first.map((p) => (
+      <li>
+        <span class="t">{p.doi ? <a href={`https://doi.org/${p.doi}`}>{p.title}</a> : p.title}</span>
+        <span class="small">{p.authors}. <i>{p.venue}</i>, {p.year}.</span>
+      </li>
+    ))}
+  </ol>
+
+  <h2>Co-authored</h2>
+  <ol class="pubs" reversed>
+    {co.map((p) => (
+      <li>
+        <span class="t">{p.doi ? <a href={`https://doi.org/${p.doi}`}>{p.title}</a> : p.title}</span>
+        <span class="small">{p.authors}. <i>{p.venue}</i>, {p.year}.</span>
+      </li>
+    ))}
+  </ol>
+
   <h2>Patent</h2>
-  <ul><li>US 12,285,273, "Multi-axial joint laxity testing apparatus and method" (2025). Co-inventor.</li></ul>
+  <p>US 12,285,273, <cite>Multi-axial joint laxity testing apparatus and method</cite> (2025; published as US 2022/0409142 A1). Co-inventor.</p>
+
+  <h2>Grants and honors</h2>
+  <ul>
+    <li><i>Journal of Orthopaedic Research Spine</i> Spotlight, 2023</li>
+    <li>Supported NIH-funded projects R01AR075399 and R01AR074800 with experimental design and statistical analysis</li>
+    <li>NC Biotechnology Center Innovation Grant, 2018</li>
+    <li>NSF Innovation Corps (I-Corps) grant, 2017</li>
+    <li>Research assistantship, UNC Greensboro, 2017–2019</li>
+    <li>Georgia Tech Athletic Association academic scholarship and letterwinner (sports medicine), 2013–2016</li>
+  </ul>
 </Base>
+<style>
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+  .pubs { padding-left: 1.4rem; }
+  .pubs li { margin-bottom: 0.9rem; }
+  .pubs .t { display: block; font-weight: 650; }
+  cite { font-style: italic; }
+</style>

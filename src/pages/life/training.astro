@@ -1,0 +1,106 @@
+---
+import Base from "../../layouts/Base.astro";
+import t from "../../data/training.json";
+
+const fmtDate = (d: string, opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }) =>
+  new Date(d + "T12:00:00").toLocaleDateString("en-US", opts);
+const k = (v: number) => (v >= 1000 ? `${Math.round(v / 1000)}k` : String(v));
+
+// Weekly volume bars (SVG, rendered at build time — no JavaScript)
+const W = 640, H = 200, padL = 44, padB = 26, padT = 10;
+const maxV = Math.ceil(Math.max(...t.weekly.map((w) => w.volume)) / 20000) * 20000;
+const bw = (W - padL - 8) / t.weekly.length;
+const yv = (v: number) => padT + (H - padT - padB) * (1 - v / maxV);
+const ticks = Array.from({ length: maxV / 20000 + 1 }, (_, i) => i * 20000);
+
+// Lift small multiples
+const SW = 300, SH = 120, sp = { l: 34, r: 10, t: 12, b: 20 };
+const from = new Date(t.from + "T12:00:00").getTime(), to = new Date(t.to + "T12:00:00").getTime();
+const sx = (d: string) => sp.l + ((new Date(d + "T12:00:00").getTime() - from) / (to - from)) * (SW - sp.l - sp.r);
+const lifts = t.lifts.map((l) => {
+  const vals = l.points.map((p) => p.e1rm);
+  const lo = Math.floor((Math.min(...vals) - 10) / 20) * 20, hi = Math.ceil((Math.max(...vals) + 10) / 20) * 20;
+  const sy = (v: number) => sp.t + (SH - sp.t - sp.b) * (1 - (v - lo) / (hi - lo));
+  return { ...l, lo, hi, sy, path: l.points.map((p, i) => `${i ? "L" : "M"}${sx(p.day).toFixed(1)},${sy(p.e1rm).toFixed(1)}`).join(" "),
+    change: Math.max(...vals) - l.points[0].e1rm };
+});
+---
+<Base title="Training" description="Twelve weeks of strength training, from my Fitbod logs.">
+  <h1>Training</h1>
+  <p class="lede">Most of my training is lifting, logged set by set in Fitbod, plus runs, hikes and long walks around Durham. Here are the last {t.weekly.length} weeks of it.</p>
+
+  <p class="note">{fmtDate(t.from)} to {fmtDate(t.to, { month: "short", day: "numeric", year: "numeric" })}</p>
+  <dl class="totals">
+    <div><dt>Lifting days</dt><dd>{t.sessions}</dd></div>
+    <div><dt>Working sets</dt><dd>{t.sets.toLocaleString("en-US")}</dd></div>
+    <div><dt>Different exercises</dt><dd>{t.exercises}</dd></div>
+    <div><dt>Pounds moved</dt><dd>{(t.totalVolume / 1e6).toFixed(2)} million</dd></div>
+  </dl>
+
+  <h2>Week by week</h2>
+  <figure class="wide fig">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Weekly training volume over ${t.weekly.length} weeks, between ${k(Math.min(...t.weekly.map(w=>w.volume)))} and ${k(Math.max(...t.weekly.map(w=>w.volume)))} pounds per week.`}>
+      {ticks.map((v) => (<g><line x1={padL} x2={W - 8} y1={yv(v)} y2={yv(v)} class="grid" /><text x={padL - 6} y={yv(v)} class="ax" text-anchor="end" dominant-baseline="middle">{k(v)}</text></g>))}
+      {t.weekly.map((w, i) => (
+        <g>
+          <rect x={padL + i * bw + 3} y={yv(w.volume)} width={bw - 6} height={yv(0) - yv(w.volume)} class="bar"><title>{`Week of ${fmtDate(w.week)}: ${w.volume.toLocaleString("en-US")} lb across ${w.sessions} sessions`}</title></rect>
+          <text x={padL + i * bw + bw / 2} y={yv(w.volume) - 5} class="n" text-anchor="middle">{w.sessions}</text>
+          {i % 2 === 0 && <text x={padL + i * bw + bw / 2} y={H - 8} class="ax" text-anchor="middle">{fmtDate(w.week)}</text>}
+        </g>
+      ))}
+    </svg>
+    <figcaption>Pounds lifted per week (weight × reps, both dumbbells counted, warm-ups excluded). The number above each bar is how many days I lifted that week.</figcaption>
+  </figure>
+
+  <h2>Getting stronger</h2>
+  <p>Estimated one-rep max for my main barbell lifts, from the best set each session. It's an estimate (the Epley formula, using sets of 12 reps or fewer), so read it as a trend, not a test.</p>
+  <div class="multiples wide">
+    {lifts.map((l) => (
+      <figure class="lift">
+        <figcaption><b>{l.name}</b><span class="up">+{l.change} lb at best</span></figcaption>
+        <svg viewBox={`0 0 ${SW} ${SH}`} role="img" aria-label={`${l.name}: estimated one-rep max from ${l.points[0].e1rm} to ${l.points.at(-1)!.e1rm} pounds over ${l.points.length} sessions. Best set ${l.best!.lb} pounds for ${l.best!.reps} reps.`}>
+          <line x1={sp.l} x2={SW - sp.r} y1={l.sy(l.lo)} y2={l.sy(l.lo)} class="grid" />
+          <line x1={sp.l} x2={SW - sp.r} y1={l.sy(l.hi)} y2={l.sy(l.hi)} class="grid" />
+          <text x={sp.l - 5} y={l.sy(l.hi)} class="ax" text-anchor="end" dominant-baseline="middle">{l.hi}</text>
+          <text x={sp.l - 5} y={l.sy(l.lo)} class="ax" text-anchor="end" dominant-baseline="middle">{l.lo}</text>
+          <path d={l.path} class="trace" />
+          {l.points.map((p) => <circle cx={sx(p.day)} cy={l.sy(p.e1rm)} r="3" class="dot"><title>{`${fmtDate(p.day)}: ${p.lb} lb × ${p.reps} (≈${p.e1rm} lb 1RM)`}</title></circle>)}
+          <text x={sp.l} y={SH - 4} class="ax">{fmtDate(t.from)}</text>
+          <text x={SW - sp.r} y={SH - 4} class="ax" text-anchor="end">{fmtDate(t.to)}</text>
+        </svg>
+        <p class="small">Best set: {l.best!.lb} lb × {l.best!.reps}</p>
+      </figure>
+    ))}
+  </div>
+
+  <h2>Bodyweight</h2>
+  <ul class="bw">
+    {t.bodyweight.map((b) => <li><b>{b.maxReps}</b> {b.name.toLowerCase()}s in one set</li>)}
+  </ul>
+
+  <p class="small">Source: Fitbod workout export, converted at build time by <code>scripts/fitbod-to-json.mjs</code>. Cardio is left out here because it lives with my watch data in the <a href="/lab/pulse">Pulse lab</a>.</p>
+</Base>
+
+<style>
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+  .totals { display: flex; flex-wrap: wrap; gap: 0.75rem 2.25rem; margin: 0 0 1rem; }
+  .totals dt { font-size: var(--step--1); color: var(--ink-soft); }
+  .totals dd { margin: 0; font-size: var(--step-2); font-weight: 800; }
+  .fig svg, .lift svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .fig { max-width: 52rem; }
+  @media (min-width: 64rem) { .fig, .multiples { margin-left: 15rem; } }
+  .grid { stroke: var(--grid-major); stroke-width: 1; }
+  .ax { font: 600 11px var(--font); fill: var(--ink-soft); }
+  .n { font: 700 11px var(--font); fill: var(--ink); }
+  .bar { fill: var(--ink); }
+  .bar:hover { fill: var(--pen); }
+  .multiples { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.5rem 2rem; max-width: 52rem; }
+  .lift { margin: 0; }
+  .lift figcaption { display: flex; justify-content: space-between; color: var(--ink); font-size: var(--step-0); margin: 0 0 0.25rem; }
+  .lift .up { color: var(--pen); font-weight: 700; }
+  .lift .small { margin: 0.25rem 0 0; }
+  .trace { fill: none; stroke: var(--pen); stroke-width: 2; stroke-linejoin: round; }
+  .dot { fill: var(--paper); stroke: var(--pen); stroke-width: 1.5; }
+  .bw { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; }
+  .bw b { font-size: var(--step-1); }
+</style>

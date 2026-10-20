@@ -4,7 +4,7 @@ org: "Wilson Sporting Goods"
 role: "Algorithm Engineer, Embedded Sensors"
 years: "2017"
 order: 4
-summary: "Real-time algorithms for IMUs embedded in sporting goods, developed with NFL teams to track the ball and analyze player performance."
+summary: "Real-time kinematics from sensors inside footballs and basketballs, for the Wilson X line, tested with NFL and NCAA teams."
 ---
 
 ## The problem
@@ -17,6 +17,6 @@ Algorithm engineer.
 
 ## Approach & outcome
 
-- Real-time tracking and statistics from embedded IMUs.
-- Partnered with NFL teams on new ball-tracking technology for player-performance analysis.
-- <span class="tk">[TK: a concrete story from this work]</span>
+- Algorithms and data pipelines for the Wilson X line of connected footballs and basketballs.
+- Field studies with NFL and NCAA teams on whether ball-level data could give athletes and coaches next-generation analytics.
+- <span class="tk">[TK: a concrete story from this work, from our question session]</span>

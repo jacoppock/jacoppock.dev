@@ -2,6 +2,7 @@
 import "@fontsource-variable/atkinson-hyperlegible-next";
 import "@fontsource-variable/atkinson-hyperlegible-mono";
 import "../styles/global.css";
+import { PAGES, ogPath } from "../lib/pages";
 
 interface Props { title?: string; description?: string }
 const {
@@ -14,6 +15,8 @@ const nav = [
   ["/writing", "Writing"], ["/life", "Off the clock"], ["/about", "About"],
 ];
 const here = Astro.url.pathname.replace(/\/$/, "") || "/";
+const ogImage = new URL(PAGES[here] ? ogPath(here) : ogPath("/"), Astro.site);
+const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
 const person = {
   "@context": "https://schema.org", "@type": "Person",
   name: "James A. Coppock", url: "https://jacoppock.dev",
@@ -37,6 +40,16 @@ const person = {
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+    <script is:inline>
+      // Analytics events: sent once per page view, and only if Umami is configured.
+      (() => { const sent = new Set(); window.jtrack = (n) => { if (sent.has(n)) return; sent.add(n); try { window.umami && window.umami.track(n); } catch (e) {} }; })();
+    </script>
+    {umamiId && <script defer src="https://cloud.umami.is/script.js" data-website-id={umamiId} data-domains="jacoppock.dev,www.jacoppock.dev" />}
     <script type="application/ld+json" set:html={JSON.stringify(person)} />
   </head>
   <body>

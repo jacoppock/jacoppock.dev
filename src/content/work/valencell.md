@@ -22,6 +22,11 @@ ML engineer on wearable algorithms.
 
 ## Outcome
 
-<span class="tk">[TK: what shipped / what it enabled]</span>
+- A cuffless blood-pressure monitor that went to market.
+- ETL pipelines for training, testing and validating time-series models.
+
+## What I'd do differently
+
+<span class="tk">[TK: from our question session]</span>
 
 The [Pulse exhibit](/lab/pulse) is a hands-on version of this problem.

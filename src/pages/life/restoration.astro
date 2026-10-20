@@ -1,17 +1,69 @@
 ---
 import Base from "../../layouts/Base.astro";
 ---
-<Base title="Restoring a Morehead Hill house" description="Restoring the exterior of a contributing structure in Durham's Morehead Hill Historic District.">
-  <h1>Restoring a Morehead Hill house</h1>
-  <p>Our home is a contributing structure in Durham's Morehead Hill Historic District. We set out to restore its exterior rather than replace it: repairing the original wood, refinishing it, and keeping the character that makes the street what it is. In April 2026 the work was recognized by the Durham Historic Preservation Commission.</p>
-  <p><span class="tk">[before / after drag slider]</span></p>
+<Base title="Restoring a century home" description="Restoring the exterior of a century-old home in Durham's Morehead Hill Historic District, recognized by the Durham Historic Preservation Commission.">
+  <h1>Restoring a century home</h1>
+  <p class="lede">I moved around a lot as a kid, so making a home has meant a lot to me. My wife and I found ours: a century-old house in Morehead Hill, a historic district in the heart of downtown Durham. Bringing it back has been a passion project for both of us.</p>
+
+  <figure class="ba wide" data-ba>
+    <div class="ba-frame">
+      <picture>
+        <source type="image/webp" srcset="/images/restoration/after-800.webp 800w, /images/restoration/after-1400.webp 1400w" sizes="(min-width: 64rem) 52rem, 100vw" />
+        <img class="after" src="/images/restoration/after-1400.jpg" srcset="/images/restoration/after-800.jpg 800w, /images/restoration/after-1400.jpg 1400w" sizes="(min-width: 64rem) 52rem, 100vw" width="1400" height="1050" alt="After: the house painted a deep green-gray with white trim, Hurricanes flags on the porch, and a planted front yard." />
+      </picture>
+      <div class="before-clip">
+        <picture>
+          <source type="image/webp" srcset="/images/restoration/before-800.webp 800w, /images/restoration/before-1400.webp 1400w" sizes="(min-width: 64rem) 52rem, 100vw" />
+          <img src="/images/restoration/before-1400.jpg" srcset="/images/restoration/before-800.jpg 800w, /images/restoration/before-1400.jpg 1400w" sizes="(min-width: 64rem) 52rem, 100vw" width="1400" height="1050" alt="Before: the same house in white siding with a bare dirt yard and a truck in the drive." />
+        </picture>
+      </div>
+      <div class="ba-handle" aria-hidden="true"></div>
+      <span class="ba-tag ba-tag-l" aria-hidden="true">Before</span>
+      <span class="ba-tag ba-tag-r" aria-hidden="true">After</span>
+    </div>
+    <label class="ba-label">Compare before and after
+      <input type="range" min="0" max="100" value="50" aria-valuetext="Half before, half after" />
+    </label>
+    <figcaption>Same porch, same brick piers, same rooflines. Drag to compare. Before image: Google Street View.</figcaption>
+  </figure>
+
+  <h2>Recognition</h2>
+  <p>In April 2026 the Durham Historic Preservation Commission recognized the work on the house. <span class="tk">[TK: the award's name, and a photo of the plaque or certificate]</span></p>
+
   <h2>The work</h2>
-  <ol>
-    <li><strong>Assessment</strong>: <span class="tk">[TK: what we found]</span></li>
-    <li><strong>Repair</strong>: <span class="tk">[TK: wood, trim, windows?]</span></li>
-    <li><strong>Refinishing</strong>: <span class="tk">[TK: prep, paint, colors and how we chose them]</span></li>
-    <li><strong>Recognition</strong>: Durham Historic Preservation Commission, April 2026. <span class="tk">[photo of plaque/award]</span></li>
-  </ol>
+  <p><span class="tk">[TK: what you found, what you repaired versus replaced, how you chose the colors. We'll fill this in from our question session.]</span></p>
+
   <h2>Why restore</h2>
-  <p>Restoration is signal recovery: you work to get back what was there rather than overwrite it with something new. <span class="tk">[TK: a paragraph in your own voice]</span></p>
+  <p><span class="tk">[TK: a line or two in your own voice. Suggested angle: restoration is recovering what was there instead of writing over it, the same instinct as pulling a signal out of noise.]</span></p>
 </Base>
+
+<style>
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+  .ba { max-width: 52rem; margin: 1.5rem 0 2rem; }
+  @media (min-width: 64rem) { .ba { margin-left: 15rem; } }
+  .ba-frame { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border: 1.5px solid var(--ink); background: var(--paper-deep); touch-action: pan-y; cursor: ew-resize; }
+  .ba-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .before-clip { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); }
+  .ba-handle { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 2px; margin-left: -1px; background: var(--paper); box-shadow: 0 0 0 1px var(--ink); }
+  .ba-handle::after { content: ""; position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: var(--paper); border: 2px solid var(--ink); }
+  .ba-tag { position: absolute; top: 0.6rem; padding: 0.15rem 0.55rem; background: var(--paper); color: var(--ink); font-size: var(--step--1); font-weight: 700; border: 1.5px solid var(--ink); }
+  .ba-tag-l { left: 0.6rem; } .ba-tag-r { right: 0.6rem; }
+  .ba-label { display: block; margin-top: 0.6rem; }
+  .ba-label input { margin-top: 0.3rem; }
+</style>
+
+<script>
+  for (const fig of document.querySelectorAll<HTMLElement>("[data-ba]")) {
+    const frame = fig.querySelector<HTMLElement>(".ba-frame")!;
+    const range = fig.querySelector<HTMLInputElement>("input")!;
+    const set = (v: number) => {
+      v = Math.max(0, Math.min(100, v)); range.value = String(Math.round(v));
+      frame.style.setProperty("--pos", `${v}%`);
+      range.setAttribute("aria-valuetext", v < 5 ? "All after" : v > 95 ? "All before" : `${Math.round(v)}% before`);
+    };
+    const fromPointer = (e: PointerEvent) => { const r = frame.getBoundingClientRect(); set(((e.clientX - r.left) / r.width) * 100); };
+    frame.addEventListener("pointerdown", (e) => { frame.setPointerCapture(e.pointerId); fromPointer(e); });
+    frame.addEventListener("pointermove", (e) => { if (e.buttons) fromPointer(e); });
+    range.addEventListener("input", () => set(+range.value));
+  }
+</script>

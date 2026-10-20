@@ -64,18 +64,22 @@ const summary = `One night of James's sleep, ${dateLabel}: ${fmtDuration(night.s
 
 <script>
   import { mountNightChart, type Night, type Moment } from "../scripts/night-chart";
+  const track = (name: string) => (window as any).jtrack?.(name);
 
   for (const el of document.querySelectorAll<HTMLElement>("figure.night")) {
     const night: Night = JSON.parse(el.dataset.night!);
+    let ready = false;
     const chart = mountNightChart(el, night, {
       animate: el.dataset.animate === "1",
       onMoment: (m: Moment, n: Night) => {
+        if (ready) track("night-scrub");
         const detail = { moment: m, night: { avgHr: n.avgHr, avgHrv: n.avgHrv, day: n.day } };
         el.dataset.moment = JSON.stringify(detail); // for listeners that mount later
         el.dispatchEvent(new CustomEvent("moment", { detail, bubbles: true }));
       },
     });
 
+    ready = true;
     if (el.dataset.picker === "1") {
       const select = el.querySelector<HTMLSelectElement>("select[data-picker]")!;
       fetch("/data/nights.json").then((r) => r.json()).then((nights: Night[]) => {
@@ -88,7 +92,7 @@ const summary = `One night of James's sleep, ${dateLabel}: ${fmtDuration(night.s
           select.append(o);
         }
         select.disabled = false;
-        select.addEventListener("change", () => chart.setNight(nights.find((n) => n.day === select.value)!));
+        select.addEventListener("change", () => { chart.setNight(nights.find((n) => n.day === select.value)!); track("night-picked"); });
       });
     }
   }

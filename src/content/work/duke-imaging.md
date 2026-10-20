@@ -18,7 +18,7 @@ PhD researcher in the Musculoskeletal Bioengineering Lab (advisor: Louis DeFrate
 ## Approach
 
 - Deep-learning models that automatically segment intervertebral discs in MR images.
-- A suite of deep-learning image-registration methods that track tissue deformation over time.
+- An unsupervised, diffeomorphic image-registration method that estimates voxel-wise disc strain in vivo, without anything invasive.
 - Controlled loading studies (e.g., treadmill walking) imaged before and after exercise.
 
 ## Outcome
@@ -29,4 +29,4 @@ PhD researcher in the Musculoskeletal Bioengineering Lab (advisor: Louis DeFrate
 
 ## What I'd do differently
 
-<span class="tk">[TK: one honest lesson]</span>
+<span class="tk">[TK: from our question session]</span>

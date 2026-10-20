@@ -56,6 +56,7 @@
 <script>
   import { synthesize, process, FS } from "../scripts/ppg";
   import { fmtDuration } from "../scripts/night-chart";
+  const track = (name: string) => (window as any).jtrack?.(name);
 
   const root = document.querySelector<HTMLElement>(".pulse-lab")!;
   const $ = (k: string) => root.querySelector<HTMLElement>(`[data-pl=${k}]`)!;
@@ -131,9 +132,12 @@
   document.addEventListener("moment", (e) => onMoment((e as CustomEvent).detail));
   const pending = document.querySelector<HTMLElement>("figure.night[data-moment]");
   if (pending) onMoment(JSON.parse(pending.dataset.moment!));
-  for (const el of [motion, lo, hi]) el.addEventListener("input", render);
+  for (const el of [motion, lo, hi]) el.addEventListener("input", () => { track(el === motion ? "pulse-motion" : "pulse-filter"); render(); });
   cancelBtn.addEventListener("click", () => {
-    cancelBtn.setAttribute("aria-pressed", String(cancelBtn.getAttribute("aria-pressed") !== "true"));
+    const on = cancelBtn.getAttribute("aria-pressed") !== "true";
+    cancelBtn.setAttribute("aria-pressed", String(on));
+    track("pulse-cancel");
+    if (on && +motion.value > 0) track("pulse-complete"); // finished the guided path
     render();
   });
   new ResizeObserver(render).observe(canvas);

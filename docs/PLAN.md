@@ -191,3 +191,15 @@ Still open:
 1. Should the restoration section name the street or only the district? (Default: district only.)
 2. `www` or apex as the canonical domain? (Default: apex `jacoppock.dev`, with `www` redirecting to it.)
 3. Childhood hockey photos and restoration before/after photos, whenever they're ready.
+
+## 9. Status log
+
+**2026-10-20, draft 2 of the site**
+- Pulse lab: real Suunto run (Oct 17) and Grand Canyon hike (Oct 10) via Strava. Only heart rate, steps per minute, speed and elevation change are kept; GPS, segment names and clock times are removed (`scripts/strava-to-json.mjs`).
+- `/life/training` from the Fitbod export (`scripts/fitbod-to-json.mjs`): weekly volume, estimated 1RM trends, bodyweight bests. Build-time SVG, no JS.
+- `/life/restoration`: before/after slider. The phone photo's EXIF (including GPS) is stripped. The before image is Google Street View, with the pickup's license plate blurred and attribution added.
+- CV, About, Contact, Research and case studies filled from James's LinkedIn summary, résumé and PubMed (9 papers with DOIs).
+- Share cards: `/og/*.png` generated at build time with satori and resvg.
+- Analytics: Umami, loaded only when `PUBLIC_UMAMI_WEBSITE_ID` is set. Events: night-scrub, night-picked, pulse-motion, pulse-filter, pulse-cancel, pulse-complete, activity-run/hike, camera-start, contact-email, contact-linkedin.
+- CI (`.github/workflows/ci.yml`): build, then Playwright (69 checks: every page × light/dark/mobile, axe, no horizontal scroll, drafts hidden, camera opt-in, motion-cancellation behavior), then Lighthouse CI budgets.
+- Local Lighthouse: 100/100/100/100 on /, /lab/pulse, /life/training, /life/restoration, /cv.

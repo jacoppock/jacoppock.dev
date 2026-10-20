@@ -112,7 +112,7 @@
 
 | Layer | Choice | Why |
 |---|---|---|
-| Framework | **Astro 5** + MDX + content collections (Zod) | The site is mostly text with a few heavy islands. Replaces the unmaintained Contentlayer. |
+| Framework | **Astro 7** (7.4.1) + MDX + content collections (Zod) | The site is mostly text with a few heavy islands. Replaces the unmaintained Contentlayer. |
 | Islands | Svelte (or Preact) | Small runtime. |
 | Signals/charts | Canvas 2D + D3 for live traces, Observable Plot for static figures | 60 fps streaming. |
 | In-browser ML | ONNX Runtime Web (WebGPU → WASM) in a Web Worker | The Disc demo. Loads only on user action. |

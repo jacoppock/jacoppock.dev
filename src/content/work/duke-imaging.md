@@ -3,8 +3,12 @@ title: "Imaging the spine under load"
 org: "Duke University"
 role: "ML Research Scientist, Medical Imaging (PhD, Biomedical Engineering)"
 years: "2020–2023"
-order: 2
+order: 3
 summary: "Deep-learning segmentation and registration of MRI to measure how intervertebral discs deform and recover, which became my dissertation."
+highlights:
+  - "Deep-learning MRI segmentation and diffeomorphic registration"
+  - "Measured how living spinal discs deform under load"
+  - "Dissertation, first-author papers, and a US patent"
 ---
 
 ## The problem

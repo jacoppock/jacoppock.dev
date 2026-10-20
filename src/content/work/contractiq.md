@@ -2,10 +2,14 @@
 title: "ContractIQ"
 org: "Infinia ML / Aspirion"
 role: "Manager, AI/ML Applied Science; lead of the ContractIQ and Pricing & Scoring teams"
-years: "2025 to present"
+years: "2025–present"
 order: 1
 summary: "A contract-intelligence platform that turns payer contracts into structured, auditable reimbursement logic, so providers can see what they should be paid and catch underpayments."
 status: published
+highlights:
+  - "Shaped ContractIQ from first design to production"
+  - "Lead the ContractIQ and Pricing & Scoring teams"
+  - "Auditable reimbursement logic that non-technical experts can read and change"
 ---
 
 ## The problem

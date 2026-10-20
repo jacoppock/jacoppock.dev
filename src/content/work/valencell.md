@@ -3,8 +3,12 @@ title: "Heart rate on the move"
 org: "Valencell"
 role: "Machine Learning Engineer, Wearable Algorithms"
 years: "2017–2018"
-order: 3
+order: 4
 summary: "Deep-learning algorithms for heart-rate and blood-pressure estimation from wearable optical sensors, built to hold up while people move."
+highlights:
+  - "Deep learning for heart rate and blood pressure from PPG"
+  - "A cuffless blood-pressure monitor that went to market"
+  - "Learning from dense signals with sparse labels"
 ---
 
 ## The problem

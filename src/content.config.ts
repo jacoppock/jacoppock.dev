@@ -13,6 +13,8 @@ const work = defineCollection({
     years: z.string(),
     order: z.number(),
     summary: z.string(),
+    featured: z.boolean().default(true),
+    highlights: z.array(z.string()).default([]),
     status: z.enum(["published", "draft"]).default("published"),
   }),
 });

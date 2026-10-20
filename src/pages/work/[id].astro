@@ -21,4 +21,11 @@ const { Content } = await render(entry);
 <style>
   .role { font-size: var(--step-1); color: var(--ink-soft); }
   .back { margin-top: 3rem; }
+  .prose :global(.flow) { margin: 1.75rem 0 2rem; }
+  .prose :global(.flow ol) { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 0.6rem; counter-reset: flow; }
+  .prose :global(.flow li) { counter-increment: flow; position: relative; padding: 0.8rem 0.9rem; border: 1.5px solid var(--ink); background: var(--paper-deep); display: grid; gap: 0.3rem; }
+  .prose :global(.flow li b) { font-size: var(--step-0); }
+  .prose :global(.flow li b::before) { content: counter(flow); display: inline-grid; place-items: center; width: 1.4rem; height: 1.4rem; margin-right: 0.45rem; border-radius: 50%; background: var(--pen); color: var(--paper); font-size: 0.8rem; }
+  .prose :global(.flow li span) { font-size: var(--step--1); color: var(--ink-soft); line-height: 1.4; }
+  .prose :global(.flow figcaption) { margin-top: 0.6rem; }
 </style>

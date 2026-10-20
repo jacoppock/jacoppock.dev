@@ -3,8 +3,9 @@ title: "Tracking the ball"
 org: "Wilson Sporting Goods"
 role: "Algorithm Engineer, Embedded Sensors"
 years: "2017"
-order: 4
+order: 5
 summary: "Real-time kinematics from sensors inside footballs and basketballs, for the Wilson X line, tested with NFL and NCAA teams."
+featured: false
 ---
 
 ## The problem

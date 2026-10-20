@@ -3,24 +3,47 @@ import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
 import { isVisible } from "../../lib/published";
 const items = (await getCollection("work")).filter(isVisible).sort((a, b) => a.data.order - b.data.order);
+const featured = items.filter((w) => w.data.featured);
+const earlier = items.filter((w) => !w.data.featured);
 ---
-<Base title="Work">
+<Base title="Work" description="Case studies: ContractIQ at Infinia ML, a health platform at Bionic Health, MRI research at Duke, and wearables at Valencell.">
   <h1>Work</h1>
-  <p class="lede">Each case study follows the same shape: the problem, my role, the approach, the outcome, and what I'd do differently.</p>
-  {items.map((w) => (
+  <p class="lede">Newest first. Each case study covers the problem, my role, what we built, and what I learned.</p>
+  {featured.map((w) => (
     <>
       <p class="note">{w.data.years}<br />{w.data.org}</p>
       <article class="entry">
         <h2><a href={`/work/${w.id}`}>{w.data.title}</a></h2>
-        {w.data.status === "draft" && <p class="draft">Draft, hidden on the live site until approved.</p>}
+        <p class="role">{w.data.role}</p>
         <p>{w.data.summary}</p>
+        {w.data.highlights.length > 0 && <ul class="hl">{w.data.highlights.map((h) => <li>{h}</li>)}</ul>}
       </article>
     </>
   ))}
+  {earlier.length > 0 && (
+    <>
+      <h2 class="earlier-h">Earlier</h2>
+      {earlier.map((w) => (
+        <>
+          <p class="note">{w.data.years}<br />{w.data.org}</p>
+          <article class="entry small-entry">
+            <h3><a href={`/work/${w.id}`}>{w.data.title}</a></h3>
+            <p>{w.data.summary}</p>
+          </article>
+        </>
+      ))}
+    </>
+  )}
 </Base>
 <style>
   .lede { font-size: var(--step-1); }
-  .entry h2 { margin-top: 0; font-size: var(--step-1); }
-  .entry { margin-bottom: 1.75rem; }
+  .entry { margin-bottom: 2.5rem; }
+  .entry h2 { margin-top: 0; font-size: var(--step-2); }
+  .role { color: var(--ink-soft); margin: -0.2rem 0 0.6rem; }
+  .hl { margin: 0; padding-left: 1.1rem; }
+  .hl li::marker { color: var(--pen); }
+  .earlier-h { font-size: var(--step-1); margin-top: 1rem; }
+  .small-entry h3 { margin-top: 0; font-size: var(--step-0); }
+  .small-entry { margin-bottom: 1.25rem; }
   @media (max-width: 63.99rem) { .note { margin: 1.5rem 0 0.25rem; } }
 </style>

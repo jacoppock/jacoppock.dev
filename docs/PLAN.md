@@ -42,7 +42,7 @@
 - **Default view, no permissions needed.** One real night of James's Oura data drawn as a live instrument trace: heart rate and HRV every 5 minutes, movement every 30 seconds, and sleep stages, with a slider to scrub through the night. A calendar strip lets the visitor pick any of about 100 nights (Aug–Oct 2026 so far, extended over time).
 - **The explorable.** The ring stores summaries, not the raw pulse waveform, so the signal-processing lesson runs on a beat-level waveform **reconstructed from James's own heart-rate and HRV values**, labeled "reconstructed from my data." The visitor adds motion noise, drags the band-pass cutoff, removes artifacts and watches heart rate recover. That walks through the same detrend → filter → artifact removal → peak detection steps as before, with no camera.
 - **Opt-in camera mode: "Try it with your own pulse →".** A secondary button the visitor has to choose. No permission prompt fires until they click, and the page says plainly that everything stays on their device and nothing is recorded. If they decline or have no camera, nothing breaks, because the default view is the complete experience.
-- **Data pipeline.** A build-time script pulls Oura nights into static JSON, so the site makes no live API calls and no ring token ever reaches the browser. James chooses which nights and metrics to publish. Timestamps are shifted to relative time ("hour 3 of sleep") so the data doesn't reveal his daily schedule.
+- **Data pipeline.** A build-time script pulls Oura nights into static JSON, so the site makes no live API calls and no ring token ever reaches the browser. All metrics are approved for publishing (HR, HRV, sleep stages, movement). Timestamps are shifted to relative time ("hour 3 of sleep") so the data doesn't reveal his daily schedule.
 - Tells the Valencell and Wilson story: motion-tolerant sensing.
 - The camera mode must state its limits: it is not a medical device, and camera pulse readings are less accurate on darker skin.
 
@@ -58,7 +58,7 @@
 - **Restoring a Morehead Hill house (historic preservation).**
   - A drag slider for before/after photos of the exterior.
   - A scroll-through elevation drawing with annotated stages: assessment, paint and wood repair, refinishing, final.
-  - A short essay on why to restore rather than replace, and the local preservation recognition **(awarded April 2026)**, with a photo of the plaque or award.
+  - A short essay on why to restore rather than replace, and recognition from the **Durham Historic Preservation Commission (April 2026)**, with a photo of the plaque or award.
   - Tie-in to the theme: restoration is signal recovery, recovering what was there instead of overwriting it.
   - ⚠️ **Privacy:** name the historic district, not the street address, and crop house numbers out of photos. Decide this deliberately before publishing.
 - **Photography.** A fast, full-bleed gallery. Each photo can flip to show EXIF settings and a one-line story. Images are served as AVIF/WebP with blur placeholders.
@@ -118,7 +118,7 @@
 | In-browser ML | ONNX Runtime Web (WebGPU → WASM) in a Web Worker | The Disc demo. Loads only on user action. |
 | 3D | Three.js only if the Disc needs it, with geometry baked offline | Keeps the home page light. |
 | Images | Astro `<Image>`, AVIF/WebP, blur placeholders | Photography and restoration galleries. |
-| Hosting | Vercel (likely current host; confirm) or Cloudflare Pages | Preview deploy per PR. |
+| Hosting | **Vercel** (current host, confirmed) | Preview deploy per PR; keeps existing DNS. |
 | Analytics | Plausible or Umami + custom events + `web-vitals` | Privacy-friendly, which matters for a camera demo. |
 | Quality gates | Lighthouse CI, axe via Playwright, visual snapshots (Chromium/WebKit/Firefox), size-limit | A PR fails when a budget breaks. |
 | OG cards | Generated per page at build time | Replaces `booga.jpg`. |
@@ -185,8 +185,9 @@
 
 Answered 2026-10-20: recognition awarded April 2026 · hockey = played growing up + Canes fan and season-ticket member · no photo archive yet (use placeholders) · Infinia approval later · Oura approved as default · camera opt-in only.
 
+Answered later on 2026-10-20: recognition from the **Durham Historic Preservation Commission** · **all Oura metrics** (HR, HRV, sleep stages, movement) are fine to publish · hosting is **Vercel** (keep it; Astro deploys there with the official adapter or as static output).
+
 Still open:
-1. Which organization gave the preservation recognition? Should the section name the street or only the district?
-2. Which Oura metrics are okay to publish: HR, HRV, sleep stages, movement? Should any nights be excluded?
-3. Confirm the host and DNS (Vercel?) and whether `www` or the apex is canonical.
-4. Do you have childhood hockey photos and restoration before/after photos to scan or send?
+1. Should the restoration section name the street or only the district? (Default: district only.)
+2. `www` or apex as the canonical domain? (Default: apex `jacoppock.dev`, with `www` redirecting to it.)
+3. Childhood hockey photos and restoration before/after photos, whenever they're ready.

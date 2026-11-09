@@ -12,7 +12,7 @@ export const PAGES: Record<string, { title: string; kicker: string }> = {
   "/life/restoration": { title: "Restoring the Bishop-Christian House", kicker: "c. 1904. Recognized by the Durham Historic Preservation Commission." },
   "/life/training": { title: "Training", kicker: "Twelve weeks of lifting, set by set" },
   "/life/photography": { title: "Photography", kicker: "Wildlife from a trip to Africa" },
-  "/life/hockey": { title: "Hockey", kicker: "Section 113. 2026 Stanley Cup champions." },
+  "/life/hockey": { title: "Hockey", kicker: "2026 Stanley Cup champions." },
   "/about": { title: "About", kicker: "James Coppock, PhD" },
   "/cv": { title: "James A. Coppock, PhD", kicker: "Curriculum vitae" },
   "/contact": { title: "Get in touch", kicker: "Healthcare AI, speaking, advising" },

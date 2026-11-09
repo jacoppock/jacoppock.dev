@@ -20,7 +20,7 @@ const sizes = (i: number) => (FULL.has(i) ? "(min-width: 64rem) 68rem, 100vw" : 
 
   <div class="gallery wide" data-gallery>
     {photos.map((p, i) => (
-      <figure class:list={["shot", { full: FULL.has(i) }]} style={`--c:${p.color};background-image:url(${p.lqip})`}>
+      <figure id={p.slug} class:list={["shot", { full: FULL.has(i) }]} style={`--c:${p.color};background-image:url(${p.lqip})`}>
         <a href={src(p, 2048, "webp")} data-i={i} aria-label={`Open ${p.title} full screen`}>
           <picture>
             <source type="image/avif" srcset={set(p, "avif")} sizes={sizes(i)} />

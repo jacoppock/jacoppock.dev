@@ -5,6 +5,7 @@ import "../styles/global.css";
 import { PAGES, ogPath } from "../lib/pages";
 import { SHOW_UNFINISHED } from "../lib/env";
 import { getCollection } from "astro:content";
+import SiteTools from "../components/SiteTools.astro";
 const hasWriting = (await getCollection("writing")).some((e) => SHOW_UNFINISHED || e.data.status !== "draft");
 
 interface Props { title?: string; description?: string; theme?: "light" | "dark" }
@@ -51,6 +52,10 @@ const person = {
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={ogImage} />
     <script is:inline>
+      // Apply a saved light/dark choice before first paint, so the page never flashes.
+      try { const t = localStorage.getItem("theme"); if (t === "light" || t === "dark") document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
+    <script is:inline>
       // Analytics events: sent once per page view, and only if Umami is configured.
       (() => { const sent = new Set(); window.jtrack = (n) => { if (sent.has(n)) return; sent.add(n); try { window.umami && window.umami.track(n); } catch (e) {} }; })();
     </script>
@@ -64,6 +69,7 @@ const person = {
         <nav class="site-nav" aria-label="Main">
           {nav.map(([href, label]) => <a href={href} aria-current={here.startsWith(href) ? "page" : undefined}>{label}</a>)}
         </nav>
+        <SiteTools />
       </header>
       <main class="page"><slot /></main>
       <footer class="site-footer">

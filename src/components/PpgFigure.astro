@@ -1,0 +1,49 @@
+---
+// A static, build-time rendering of the Pulse lab's pipeline: no JavaScript ships.
+import { synthesize, process, FS } from "../scripts/ppg";
+const s = synthesize(72, 45, 14, 0.75, 10, 3);
+const raw = process(s, { lo: 0.5, hi: 4, cancel: false });
+const clean = process(s, { lo: 0.5, hi: 4, cancel: true });
+const W = 720, laneH = 64, gap = 26, top = 22;
+const lanes = [
+  { label: "Light at the sensor", data: Array.from(s.light), cls: "raw" },
+  { label: "Accelerometer", data: Array.from(s.accel), cls: "acc" },
+  { label: `Filtered only: ${Math.round(raw.bpm ?? 0)} bpm (fooled by footsteps)`, data: Array.from(raw.filtered), cls: "bad" },
+  { label: `With motion cancellation: ${Math.round(clean.bpm ?? 0)} bpm (true: 72)`, data: Array.from(clean.filtered), cls: "good", peaks: clean.peaks },
+];
+const H = top + lanes.length * (laneH + gap);
+const x = (i: number, n: number) => ((i - FS) / (n - FS - 1)) * W;
+const paths = lanes.map((l, k) => {
+  const d = l.data.slice(FS);
+  const mn = Math.min(...d), mx = Math.max(...d);
+  const y0 = top + k * (laneH + gap);
+  const y = (v: number) => y0 + laneH - ((v - mn) / (mx - mn || 1)) * laneH;
+  const path = l.data.map((v, i) => (i < FS ? "" : `${i === FS ? "M" : "L"}${x(i, l.data.length).toFixed(1)},${y(v).toFixed(1)}`)).join("");
+  const marks = (l.peaks ?? []).map((p) => ({ x: x(p, l.data.length), y: y(l.data[p]) - 7 }));
+  return { ...l, path, y0, marks };
+});
+---
+<figure class="ppg">
+  <svg viewBox={`0 -4 ${W} ${H}`} role="img" aria-label={`A simulated pulse signal while running. Filtering alone estimates ${Math.round(raw.bpm ?? 0)} beats per minute; with accelerometer-based motion cancellation it recovers ${Math.round(clean.bpm ?? 0)}, close to the true 72.`}>
+    {paths.map((p) => (
+      <g>
+        <text x="0" y={p.y0 - 8} class="lbl">{p.label}</text>
+        <path d={p.path} class={p.cls} />
+        {p.marks.map((m) => <path d={`M${m.x.toFixed(1)},${m.y.toFixed(1)} l-4,-7 h8 z`} class="mark" />)}
+      </g>
+    ))}
+  </svg>
+  <figcaption>Simulated running at 72 bpm, using the same pipeline as the <a href="/lab/pulse">Pulse lab</a>. The motion sits inside the heart's frequency range, so a filter alone locks onto the stride.</figcaption>
+</figure>
+<style>
+  .ppg { margin: 0 0 2.25rem; padding: 1rem 1.1rem 0.75rem; border: 1.5px solid var(--ink); background: var(--paper-deep); }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .lbl { font: 650 13px var(--font); fill: var(--ink-soft); }
+  path { fill: none; stroke-linejoin: round; }
+  .raw { stroke: var(--graphite); stroke-width: 1.4; }
+  .acc { stroke: var(--hrv); stroke-width: 1.2; }
+  .bad { stroke: var(--ink); stroke-width: 1.4; opacity: 0.55; }
+  .good { stroke: var(--pen); stroke-width: 2.2; }
+  .mark { fill: var(--ink); stroke: none; }
+  figcaption { margin-top: 0.4rem; }
+</style>

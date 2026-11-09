@@ -9,6 +9,16 @@ highlights:
   - "Deep-learning MRI segmentation and diffeomorphic registration"
   - "Measured how living spinal discs deform under load"
   - "Dissertation, first-author papers, and a US patent"
+flow:
+  - title: "Load"
+    text: "Participants scanned with MRI before and after a treadmill walking stress test"
+  - title: "Segment"
+    text: "Deep-learning models outline each intervertebral disc in 3D"
+  - title: "Register"
+    text: "Diffeomorphic registration matches the same tissue across time points"
+  - title: "Measure"
+    text: "Disc height, shape and voxel-wise strain, compared before and after loading"
+flowCaption: "The imaging pipeline behind my dissertation."
 ---
 
 ## The problem

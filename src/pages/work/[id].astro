@@ -2,6 +2,8 @@
 import Base from "../../layouts/Base.astro";
 import { getCollection, render } from "astro:content";
 import { isVisible } from "../../lib/published";
+import StepFlow from "../../components/StepFlow.astro";
+import PpgFigure from "../../components/PpgFigure.astro";
 export async function getStaticPaths() {
   const items = (await getCollection("work")).filter(isVisible);
   return items.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
@@ -14,6 +16,11 @@ const { Content } = await render(entry);
   <p class="note">{entry.data.org}<br />{entry.data.years}</p>
   <h1>{entry.data.title}</h1>
   <p class="role">{entry.data.role}</p>
+  {entry.data.flow.length > 0 && (
+    <StepFlow steps={entry.data.flow} caption={entry.data.flowCaption}
+      link={entry.id === "contractiq" ? { href: "/lab/contract", label: "Open the explorer." } : undefined} />
+  )}
+  {entry.data.figure === "ppg" && <PpgFigure />}
   <div class="prose"><Content /></div>
   <p class="back"><a href="/work">All work</a></p>
 </Base>
@@ -21,11 +28,4 @@ const { Content } = await render(entry);
 <style>
   .role { font-size: var(--step-1); color: var(--ink-soft); }
   .back { margin-top: 3rem; }
-  .prose :global(.flow) { margin: 1.75rem 0 2rem; }
-  .prose :global(.flow ol) { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: 0.6rem; counter-reset: flow; }
-  .prose :global(.flow li) { counter-increment: flow; position: relative; padding: 0.8rem 0.9rem; border: 1.5px solid var(--ink); background: var(--paper-deep); display: grid; gap: 0.3rem; }
-  .prose :global(.flow li b) { font-size: var(--step-0); }
-  .prose :global(.flow li b::before) { content: counter(flow); display: inline-grid; place-items: center; width: 1.4rem; height: 1.4rem; margin-right: 0.45rem; border-radius: 50%; background: var(--pen); color: var(--paper); font-size: 0.8rem; }
-  .prose :global(.flow li span) { font-size: var(--step--1); color: var(--ink-soft); line-height: 1.4; }
-  .prose :global(.flow figcaption) { margin-top: 0.6rem; }
 </style>

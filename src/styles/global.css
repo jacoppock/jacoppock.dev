@@ -75,7 +75,12 @@ code { font-family: var(--mono); font-size: 0.9em; }
 .frame { max-width: var(--wide); margin: 0 auto; padding: 0 var(--gutter); }
 .site-header { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; align-items: baseline; justify-content: space-between; padding: 1.5rem 0 1rem; border-bottom: 1.5px solid var(--ink); }
 .site-name { font-weight: 800; font-size: var(--step-1); text-decoration: none; letter-spacing: -0.02em; }
-.site-nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem; order: 3; width: 100%; }
+.site-header > .site-tools { order: 2; margin-left: auto; }
+@media (min-width: 60rem) {
+  .site-nav { order: 2; width: auto; margin-left: auto; }
+  .site-header > .site-tools { order: 3; margin-left: 0.5rem; }
+}
 .site-nav a { text-decoration: none; color: var(--ink-soft); padding: 0.15rem 0; }
 .site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--pen); }
 

@@ -1,0 +1,133 @@
+---
+// Header tools: a ⌘K quick-jump menu and a light/dark switch.
+import { getCollection } from "astro:content";
+import { PAGES } from "../lib/pages";
+import { isVisible } from "../lib/published";
+import { SHOW_UNFINISHED } from "../lib/env";
+import photos from "../data/photos-africa.json";
+
+const hidden = SHOW_UNFINISHED ? [] : ["/lab/disc"];
+const work = (await getCollection("work")).filter(isVisible);
+const essays = (await getCollection("writing")).filter((e) => SHOW_UNFINISHED || e.data.status !== "draft");
+const index = [
+  ...Object.entries(PAGES).filter(([href]) => !hidden.includes(href) && !href.startsWith("/writing/"))
+    .map(([href, p]) => ({ href, title: p.title.length > 40 ? "Home" : p.title, hint: p.kicker, kind: "Page" })),
+  ...work.map((w) => ({ href: `/work/${w.id}`, title: w.data.title, hint: `${w.data.org}, ${w.data.years}`, kind: "Case study" })),
+  ...essays.map((e) => ({ href: `/writing/${e.id}`, title: e.data.title, hint: e.data.summary, kind: "Essay" })),
+  { href: "/lab/contract", title: "ContractIQ Impact Explorer", hint: "What contract intelligence is worth to a health system", kind: "Lab" },
+  ...photos.map((p) => ({ href: `/life/photography#${p.slug}`, title: p.title, hint: p.alt, kind: "Photo" })),
+];
+---
+<div class="site-tools">
+  <button type="button" class="tool" data-k-open aria-haspopup="dialog" aria-label="Search the site">
+    <span>Search</span> <kbd data-k-hint>⌘K</kbd>
+  </button>
+  <button type="button" class="tool" data-theme-toggle aria-label="Switch to dark theme">
+    <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.5a7.5 7.5 0 0 1 0 15z" fill="currentColor"/></svg>
+  </button>
+</div>
+
+<dialog class="k" data-k aria-label="Search the site">
+  <form method="dialog" class="k-box" data-k-form>
+    <label class="k-label" for="k-input">Jump to</label>
+    <input id="k-input" type="search" autocomplete="off" spellcheck="false" placeholder="Pages, case studies, essays, photos" role="combobox" aria-expanded="true" aria-controls="k-list" aria-autocomplete="list" />
+    <ul id="k-list" role="listbox" data-k-list></ul>
+    <p class="k-foot"><span><kbd>↑</kbd><kbd>↓</kbd> to move</span><span><kbd>Enter</kbd> to open</span><span><kbd>Esc</kbd> to close</span></p>
+  </form>
+</dialog>
+<script type="application/json" id="k-index" set:html={JSON.stringify(index)} />
+
+<style>
+  .site-tools { display: flex; gap: 0.4rem; align-items: center; }
+  .tool { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.3rem 0.65rem; font-size: var(--step--1); font-weight: 600; border-color: var(--grid-major); color: var(--ink-soft); }
+  .tool:hover { border-color: var(--ink); }
+  kbd { font: 600 0.72rem var(--mono); padding: 0.05rem 0.3rem; border: 1px solid var(--grid-major); border-radius: 4px; color: var(--ink-soft); }
+  .tool:hover kbd { color: inherit; border-color: currentColor; }
+  @media (max-width: 30rem) { .tool kbd { display: none; } }
+
+  .k { width: min(36rem, calc(100vw - 2rem)); max-height: min(32rem, calc(100vh - 6rem)); margin: 12vh auto auto; padding: 0; border: 1.5px solid var(--ink); background: var(--paper); color: var(--ink); box-shadow: 10px 10px 0 var(--pen); }
+  .k::backdrop { background: rgb(10 15 25 / 0.45); backdrop-filter: blur(3px); }
+  .k-box { display: grid; grid-template-rows: auto auto 1fr auto; max-height: inherit; margin: 0; }
+  .k-label { padding: 0.8rem 1rem 0; color: var(--ink-soft); }
+  input { font: inherit; font-size: var(--step-1); padding: 0.35rem 1rem 0.8rem; border: 0; border-bottom: 1.5px solid var(--ink); background: transparent; color: var(--ink); outline: none; }
+  ul { list-style: none; margin: 0; padding: 0.4rem; overflow-y: auto; }
+  ul :global(li) { display: grid; grid-template-columns: 1fr auto; gap: 0 1rem; padding: 0.5rem 0.65rem; cursor: pointer; border-radius: 4px; }
+  ul :global(li[aria-selected="true"]) { background: var(--paper-deep); box-shadow: inset 3px 0 0 var(--pen); }
+  ul :global(li b) { font-weight: 700; }
+  ul :global(li .h) { grid-column: 1; font-size: var(--step--1); color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ul :global(li .kind) { grid-row: 1; grid-column: 2; font: 600 0.75rem var(--mono); color: var(--ink-soft); }
+  ul :global(.empty) { color: var(--ink-soft); padding: 0.75rem; }
+  .k-foot { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0; padding: 0.55rem 1rem; border-top: 1px solid var(--grid-major); font-size: 0.78rem; color: var(--ink-soft); }
+  .k-foot kbd { margin-right: 0.15rem; }
+</style>
+
+<script>
+  // ---- Theme switch ----
+  const root = document.documentElement;
+  const toggle = document.querySelector<HTMLButtonElement>("[data-theme-toggle]")!;
+  const current = () => (root.dataset.theme as "light" | "dark") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const label = () => toggle.setAttribute("aria-label", current() === "dark" ? "Switch to light theme" : "Switch to dark theme");
+  label();
+  toggle.addEventListener("click", () => {
+    const next = current() === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try { localStorage.setItem("theme", next); } catch {}
+    label();
+    document.dispatchEvent(new CustomEvent("themechange"));
+    (window as any).jtrack?.(`theme-${next}`);
+  });
+
+  // ---- Quick-jump menu ----
+  type Item = { href: string; title: string; hint: string; kind: string };
+  const items: Item[] = JSON.parse(document.getElementById("k-index")!.textContent!);
+  const dlg = document.querySelector<HTMLDialogElement>("[data-k]")!;
+  const input = dlg.querySelector<HTMLInputElement>("input")!;
+  const list = dlg.querySelector<HTMLUListElement>("[data-k-list]")!;
+  const hint = document.querySelector<HTMLElement>("[data-k-hint]");
+  if (hint && !/Mac|iPhone|iPad/.test(navigator.platform)) hint.textContent = "Ctrl K";
+  let shown: Item[] = [], sel = 0;
+
+  const score = (it: Item, q: string) => {
+    if (!q) return it.kind === "Photo" ? -1 : 1;
+    const t = it.title.toLowerCase(), all = `${t} ${it.hint} ${it.kind}`.toLowerCase();
+    if (t.startsWith(q)) return 4;
+    if (t.includes(q)) return 3;
+    return q.split(/\s+/).every((w) => all.includes(w)) ? 2 : 0;
+  };
+  function render() {
+    const q = input.value.trim().toLowerCase();
+    shown = items.map((it) => [score(it, q), it] as const).filter(([s]) => s > 0).sort((a, b) => b[0] - a[0]).map(([, it]) => it).slice(0, 12);
+    sel = Math.min(sel, Math.max(0, shown.length - 1));
+    list.innerHTML = "";
+    if (!shown.length) { list.innerHTML = `<li class="empty" role="option" aria-disabled="true">Nothing matches “${input.value.replace(/[<>&]/g, "")}”.</li>`; return; }
+    shown.forEach((it, i) => {
+      const li = document.createElement("li");
+      li.id = `k-opt-${i}`; li.setAttribute("role", "option"); li.setAttribute("aria-selected", String(i === sel));
+      li.innerHTML = `<b></b><span class="kind"></span><span class="h"></span>`;
+      li.querySelector("b")!.textContent = it.title; li.querySelector(".kind")!.textContent = it.kind; li.querySelector(".h")!.textContent = it.hint;
+      li.addEventListener("click", () => go(it));
+      li.addEventListener("mousemove", () => { if (sel !== i) { sel = i; mark(); } });
+      list.append(li);
+    });
+    input.setAttribute("aria-activedescendant", `k-opt-${sel}`);
+  }
+  function mark() {
+    list.querySelectorAll("li[role=option]").forEach((li, i) => li.setAttribute("aria-selected", String(i === sel)));
+    input.setAttribute("aria-activedescendant", `k-opt-${sel}`);
+    list.querySelector(`#k-opt-${sel}`)?.scrollIntoView({ block: "nearest" });
+  }
+  function go(it: Item) { (window as any).jtrack?.("search-go"); dlg.close(); location.href = it.href; }
+  function open() { if (dlg.open) return; input.value = ""; sel = 0; render(); dlg.showModal(); input.focus(); (window as any).jtrack?.("search-open"); }
+
+  document.querySelector("[data-k-open]")!.addEventListener("click", open);
+  document.addEventListener("keydown", (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); dlg.open ? dlg.close() : open(); }
+  });
+  input.addEventListener("input", () => { sel = 0; render(); });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); sel = Math.min(sel + 1, shown.length - 1); mark(); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); sel = Math.max(sel - 1, 0); mark(); }
+    else if (e.key === "Enter") { e.preventDefault(); if (shown[sel]) go(shown[sel]); }
+  });
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+</script>

@@ -90,6 +90,37 @@ test("photography: gallery loads and the viewer opens, steps and closes", async 
   await expect(viewer).toBeHidden();
 });
 
+test("theme switch: toggles, persists across pages, no flash on load", async ({ page }) => {
+  await page.goto("/");
+  const before = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  await page.locator("[data-theme-toggle]").click();
+  const after = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  expect(after).not.toBe(before);
+  const chosen = await page.evaluate(() => document.documentElement.dataset.theme);
+  await page.goto("/work");
+  expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe(chosen);
+});
+
+test("quick-jump menu: opens with the keyboard, filters, and navigates", async ({ page }) => {
+  await page.goto("/");
+  await page.keyboard.press("Control+k");
+  const dlg = page.locator("[data-k]");
+  await expect(dlg).toBeVisible();
+  await page.keyboard.type("prototype");
+  await expect(dlg.locator("li[role=option]").first()).toContainText("The prototype was too small");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/writing\/the-prototype-was-too-small/);
+});
+
+test("every case study leads with a figure", async ({ page }) => {
+  for (const id of ["contractiq", "bionic-health", "duke-imaging", "valencell"]) {
+    await page.goto(`/work/${id}`);
+    await expect(page.locator(".flow li")).toHaveCount(4);
+  }
+  await page.goto("/work/valencell");
+  await expect(page.locator(".ppg svg")).toBeVisible();
+});
+
 test("share cards exist for every page", async ({ page }) => {
   for (const p of ["index", "lab/pulse", "life/restoration"]) {
     const res = await page.request.get(`/og/${p}.png`);

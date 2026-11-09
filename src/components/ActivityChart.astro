@@ -167,4 +167,5 @@
   canvas.addEventListener("pointermove", (e) => { if (e.buttons || e.pointerType === "mouse") fromPointer(e); });
   range.addEventListener("input", () => setIndex(+range.value));
   new ResizeObserver(() => a && draw()).observe(canvas);
+  document.addEventListener("themechange", () => a && draw());
 </script>

@@ -190,6 +190,7 @@ export function mountNightChart(root: HTMLElement, initial: Night, opts: { anima
 
   new ResizeObserver(() => draw()).observe(canvas);
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+  document.addEventListener("themechange", draw);
 
   setNight(initial);
   if (progress < 1) {

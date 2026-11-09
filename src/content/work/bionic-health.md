@@ -10,6 +10,16 @@ highlights:
   - "Web and mobile apps for patients and clinicians"
   - "Multi-modal risk models, including 30-year cardiovascular risk"
   - "An LLM assistant that runs custom analytics on demand"
+flow:
+  - title: "Ingest"
+    text: "Imaging, labs, glucose, blood pressure, sleep and heart rate, into a custom EHR"
+  - title: "Understand"
+    text: "Automated processing and inference: personalized disease-risk profiles"
+  - title: "Act"
+    text: "Web and mobile apps for patients and clinicians, built around each person's goals"
+  - title: "Interact"
+    text: "An LLM assistant that answers questions and builds custom analytics on the fly"
+flowCaption: "One system, four jobs: the same data served two very different audiences."
 ---
 
 ## The problem
@@ -22,15 +32,6 @@ We set out to build one system that could take all of it in, make sense of it, a
 
 I led Data Science & AI, and I worked as a hands-on ML engineer across the whole platform: the data model and pipelines, the models, and the product people actually used. Bionic Health was acquired in 2025 and is now Thrive Wellness.
 
-<figure class="flow" aria-label="How the platform worked: ingest, understand, act, interact">
-  <ol>
-    <li><b>Ingest</b><span>Imaging, labs, glucose, blood pressure, sleep and heart rate, into a custom EHR</span></li>
-    <li><b>Understand</b><span>Automated processing and inference: personalized disease-risk profiles</span></li>
-    <li><b>Act</b><span>Web and mobile apps for patients and clinicians, built around each person's goals</span></li>
-    <li><b>Interact</b><span>An LLM assistant that answers questions and builds custom analytics on the fly</span></li>
-  </ol>
-  <figcaption>One system, four jobs: the same data served two very different audiences.</figcaption>
-</figure>
 
 ## What we built
 

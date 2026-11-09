@@ -9,6 +9,17 @@ highlights:
   - "Deep learning for heart rate and blood pressure from PPG"
   - "A cuffless blood-pressure monitor that went to market"
   - "Learning from dense signals with sparse labels"
+flow:
+  - title: "Sense"
+    text: "An optical (PPG) sensor and an accelerometer, worn on the body"
+  - title: "Clean"
+    text: "Use the motion signal to subtract footsteps and arm swing from the light"
+  - title: "Learn"
+    text: "Deep models map the pulse waveform to heart rate and blood pressure"
+  - title: "Anchor"
+    text: "Sparse cuff readings anchor a continuous blood-pressure estimate"
+flowCaption: "From light on the skin to a continuous vital sign."
+figure: "ppg"
 ---
 
 ## The problem

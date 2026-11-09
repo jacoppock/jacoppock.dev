@@ -15,6 +15,9 @@ const work = defineCollection({
     summary: z.string(),
     featured: z.boolean().default(true),
     highlights: z.array(z.string()).default([]),
+    flow: z.array(z.object({ title: z.string(), text: z.string() })).default([]),
+    flowCaption: z.string().optional(),
+    figure: z.enum(["ppg"]).optional(),
     status: z.enum(["published", "draft"]).default("published"),
   }),
 });

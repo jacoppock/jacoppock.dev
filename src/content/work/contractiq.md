@@ -10,6 +10,16 @@ highlights:
   - "Shaped ContractIQ from first design to production"
   - "Lead the ContractIQ and Pricing & Scoring teams"
   - "Auditable reimbursement logic that non-technical experts can read and change"
+flow:
+  - title: "Read"
+    text: "Payer contracts: rate tables, carve-outs, escalators and exceptions"
+  - title: "Structure"
+    text: "Terms become structured reimbursement logic that people can audit and edit"
+  - title: "Price"
+    text: "Every claim gets an expected payment, with the clause and the arithmetic behind it"
+  - title: "Act"
+    text: "Underpayments flagged for recovery; rate changes modeled before a negotiation"
+flowCaption: "How contract intelligence works, at a high level."
 ---
 
 ## The problem

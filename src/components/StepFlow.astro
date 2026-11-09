@@ -1,0 +1,32 @@
+---
+interface Props { steps: { title: string; text: string }[]; caption?: string; link?: { href: string; label: string } }
+const { steps, caption, link } = Astro.props;
+---
+<figure class="flow">
+  <ol>
+    {steps.map((s, i) => (
+      <li>
+        <span class="n" aria-hidden="true">{i + 1}</span>
+        <b>{s.title}</b>
+        <span class="t">{s.text}</span>
+      </li>
+    ))}
+  </ol>
+  {caption && <figcaption>{caption}{link && <> <a href={link.href}>{link.label}</a></>}</figcaption>}
+</figure>
+
+<style>
+  .flow { margin: 1.5rem 0 2.25rem; }
+  ol { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0; border: 1.5px solid var(--ink); background: var(--paper-deep); }
+  li { position: relative; padding: 0.9rem 1rem 1rem; display: grid; align-content: start; gap: 0.35rem; }
+  li + li { border-left: 1.5px solid var(--ink); }
+  /* The pen connects the steps */
+  li:not(:last-child)::after { content: ""; position: absolute; top: 1.55rem; right: -0.45rem; width: 0.8rem; height: 0.8rem; background: var(--paper-deep); border-top: 2px solid var(--pen); border-right: 2px solid var(--pen); transform: rotate(45deg); z-index: 1; }
+  .n { font-family: var(--mono); font-size: 0.8rem; color: var(--pen); font-weight: 700; }
+  b { font-size: var(--step-1); line-height: 1.1; }
+  .t { font-size: var(--step--1); color: var(--ink-soft); line-height: 1.45; }
+  @media (max-width: 36rem) {
+    li + li { border-left: 0; border-top: 1.5px solid var(--ink); }
+    li:not(:last-child)::after { top: auto; bottom: -0.45rem; right: 1.2rem; transform: rotate(135deg); }
+  }
+</style>

@@ -1,0 +1,188 @@
+[
+ {
+  "slug": "zebras-at-sunrise",
+  "title": "Zebras at sunrise",
+  "alt": "A line of zebras trotting through tall golden grass at sunrise, backlit, with a lone tree on a mound behind them.",
+  "order": 1,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAACQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQBOmUDX/wHecMYd5CrfYADwKSHAA/u/KkM6FgvTcd82J+ga/NfkMVvJbvzeTYDP5+VRXazitM5CAmV/ZrjjWFe8QWMTz67NzHs3Zupz58Qz9SttNdvFD1xb3H6t3T4a2k06LhNB8zFeskz2MWyM6nxy4AspKiD18vFWAAAA=",
+  "color": "#88755b",
+  "settings": null
+ },
+ {
+  "slug": "elephant-in-the-shallows",
+  "title": "Breakfast in the shallows",
+  "alt": "An elephant standing in shallow water, lifting a white water lily with its trunk while an egret rides on its back.",
+  "order": 2,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAADwAwCdASoYABAAPu1iqU2ppaOiMAgBMB2JagCdAB3a9E4i4zPPLgAAAMsBWyvAPgwtkHMzJ1cMXZx0ZP0XIGgcXOVV0MRXTUkjj29DvwaBQMCfxmGzSDXxLm12pMj2yV0Y7uJx+rV97mKByK0EXCAwqXdH6d1HTYLtfytAAAA=",
+  "color": "#7f6a47",
+  "settings": {
+   "lens": "XF100-400mmF4.5-5.6 R LM OIS WR",
+   "focal": 115,
+   "f": 4.6,
+   "shutter": "1/4000",
+   "iso": 800
+  }
+ },
+ {
+  "slug": "the-pride",
+  "title": "The pride",
+  "alt": "Four lions lying close together in long grass, all looking the same direction.",
+  "order": 3,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRqwAAABXRUJQVlA4IKAAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JagCdIExCUKUQybuq6Uo6eVgA/Z8XQJ7bfL1dOpRf8q0GWrc95SCqCzRPKDYe87rFEBATAxSOcdOcGX2aTi8GcBuAw5S+edvUgNSHH579270XkH3nOtWZmnizOVOApyGOG4qWPC9vaS0Wwh1JJB2MoE4nxIGd2jrLZkMxFyDaG7O657AHurgA",
+  "color": "#7f603e",
+  "settings": {
+   "lens": "XF100-400mmF4.5-5.6 R LM OIS WR",
+   "focal": 400,
+   "f": 22.0,
+   "shutter": "1/320",
+   "iso": 1000
+  }
+ },
+ {
+  "slug": "mother-and-cub",
+  "title": "Mother and cub",
+  "alt": "A leopard and her cub resting together on a thick tree branch, framed by leaves.",
+  "order": 4,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRrgAAABXRUJQVlA4IKwAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYgCdAYx2urtGCtHkO4j8YMAA/r2RskAXYRpB2mS8DVsR6TLMNcKn4EWutyTfpppPxlU/DTF8y5CaUkLFnOOFkTUzNTyzAT4px19X8rBzzeplMPYaWu0Y9Dtcq0oDh51Z+ww/KsLa9O/uk1sVV3xvh2U+++7gb7X+DtwTVYzzFk2a72A7Wx5TTnJX3gQfvOHVOAAA",
+  "color": "#585a45",
+  "settings": {
+   "lens": "XF100-400mmF4.5-5.6 R LM OIS WR",
+   "focal": 400,
+   "f": 5.6,
+   "shutter": "1/400",
+   "iso": 1000
+  }
+ },
+ {
+  "slug": "eye-contact",
+  "title": "Eye contact",
+  "alt": "A close portrait of a leopard staring straight into the camera against a dark background.",
+  "order": 5,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAADwAwCdASoYABAAPu1iqU2ppaQiMAgBMB2JYwAAVGO44UXtxH2VVWVAAP70Mqhz+h3/NWzATgyUD24eHuAiPGJ+eUWPpy3umda6621KPVnKGaZVYr+iYTTlcHaBS/6YjVsoyYNXn4XwsWz36/7SAAAA",
+  "color": "#43382e",
+  "settings": {
+   "lens": "XF100-400mmF4.5-5.6 R LM OIS WR",
+   "focal": 400,
+   "f": 5.6,
+   "shutter": "1/200",
+   "iso": 2500
+  }
+ },
+ {
+  "slug": "coming-down-the-track",
+  "title": "Coming down the track",
+  "alt": "Five young lions walking toward the camera along a sandy track through dry grass.",
+  "order": 6,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYgCdMoACrKBRjZr/J150FQAAzZJslBHCsmHNIygwBLFDZZomGcVGgsNJqPwQ5QAitIFspN6tPCbLB5lvmWTcQz+Oo0vvvONITkCHdnWhuW8yaqdKlnPYtAMJjWq9wwAAAA==",
+  "color": "#947758",
+  "settings": {
+   "lens": "XF100-400mmF4.5-5.6 R LM OIS WR",
+   "focal": 312,
+   "f": 5.2,
+   "shutter": "1/4000",
+   "iso": 1000
+  }
+ },
+ {
+  "slug": "cub-in-the-canopy",
+  "title": "Cub in the canopy",
+  "alt": "A leopard cub crouched on a branch inside a leafy tree, looking at the camera.",
+  "order": 7,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRsIAAABXRUJQVlA4ILYAAADwAwCdASoYABAAPu1iqU2ppaOiMAgBMB2JQAB8hD6n4TmNP5ReX5YoAP6RuLWtt+TbZIvwyJGUHk4uy7xPDqyn0fxGuWTd0nNswmCpahU5S8kWvftge4MvAhuAXnA6wIAw+0bHzvhjTz/Oj+U67/GFroM+oZ39/XQfMAYcrMOghwWb5jugnMLe47lWnHiWsnp8noZHPmxhyanzrF0dZR5nZ4upJew9v8LFIkVVrgT34IT12QAAAA==",
+  "color": "#5c6046",
+  "settings": {
+   "lens": "XF100-400mmF4.5-5.6 R LM OIS WR",
+   "focal": 360,
+   "f": 5.6,
+   "shutter": "1/500",
+   "iso": 1600
+  }
+ },
+ {
+  "slug": "low-light",
+  "title": "Low light",
+  "alt": "A male lion with a dark mane emerging from shadow, lit only faintly.",
+  "order": 8,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAADwAwCdASoYABAAPu1kqU2ppaQiMAgBMB2JQAALfXydceLn+2x9Uh8AAP7wyRicQQzmOUQdoQTra0r5jLqo8xKe/UQEmPVYAaBt4QFK/wcJb4AA",
+  "color": "#241819",
+  "settings": {
+   "lens": "XF100-400mmF4.5-5.6 R LM OIS WR",
+   "focal": 400,
+   "f": 5.6,
+   "shutter": "1/20",
+   "iso": 6400
+  }
+ },
+ {
+  "slug": "up-close",
+  "title": "Up close",
+  "alt": "A close-up of an elephant's eye, lashes and deeply wrinkled skin.",
+  "order": 9,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAACwAwCdASoYABAAPu1qrU8ppiQiMAgBMB2JZwAARdi6Zv6tFmm4yAD54y6q8QjUfsfBt0kap/7gBz5jBfc9LdFdx3dS/Q+pcvwy2aXXYNwFKQtEvAAAAA==",
+  "color": "#373333",
+  "settings": null
+ },
+ {
+  "slug": "hide-and-seek",
+  "title": "Hide and seek",
+  "alt": "A zebra peering over a green bush in warm morning light.",
+  "order": 10,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAABwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JaACdMoAlwQnUU+TVO1M0CojIAADCzX5yxUITQBNy5RoF5bJQLbhUb8nalVrz9QKEWRXLQ2/5zgybkDVKfFiy0Jua5QtRqMv80t91BGzvroHPZ9fBjaE90RUUPPVbWn23pe/7avmwOCO1YAjVNOIDCAs+eAAA",
+  "color": "#877947",
+  "settings": {
+   "lens": "XF100-400mmF4.5-5.6 R LM OIS WR",
+   "focal": 400,
+   "f": 5.6,
+   "shutter": "1/4000",
+   "iso": 2000
+  }
+ },
+ {
+  "slug": "last-light",
+  "title": "Last light",
+  "alt": "An elephant in dark brush with the last orange light falling on its ear and face.",
+  "order": 11,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAACQAwCdASoYABAAPu1krU6ppaSiMAgBMB2JZwAAXAYjWKIYmrvAAP7w0FLDjR1AvgK8J8kqeepGr6gRMlcDt46ZF5/AAA==",
+  "color": "#1b1517",
+  "settings": null
+ },
+ {
+  "slug": "after-the-hunt",
+  "title": "After the hunt",
+  "alt": "An African wild dog in profile, its face and neck stained red after feeding.",
+  "order": 12,
+  "width": 2048,
+  "height": 1365,
+  "lqip": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYgC06CPRme6mI5IwPeY7K7gA/sC0EPELJGd89+GG+IvIgtjzfi/XI88qrcKHuLHPu7ikt9GinF0XpwkzawdsZ06MQulSHWX7g6XNRsGouyD9L8cHhvMC+0gmckrcbUPZJ6iGxzQAAA==",
+  "color": "#574746",
+  "settings": {
+   "lens": "XF100-400mmF4.5-5.6 R LM OIS WR",
+   "focal": 400,
+   "f": 5.6,
+   "shutter": "1/320",
+   "iso": 1600
+  }
+ }
+]

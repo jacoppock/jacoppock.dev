@@ -130,6 +130,10 @@ label { font-size: var(--step--1); font-weight: 650; }
 
 .readout { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
+/* Smooth cross-page transitions in browsers that support them */
+@view-transition { navigation: auto; }
+
 @media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }

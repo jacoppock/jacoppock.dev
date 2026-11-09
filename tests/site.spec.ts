@@ -37,7 +37,7 @@ test("unfinished placeholders never ship to production", async ({ page }) => {
     await expect(page.locator("body")).not.toContainText("[TK");
     await expect(page.locator("body")).not.toContainText("placeholder");
   }
-  for (const path of ["/lab/disc", "/life/photography"]) {
+  for (const path of ["/lab/disc"]) {
     await page.goto(path);
     await expect(page.locator("main")).toContainText("Coming soon.");
   }
@@ -75,6 +75,19 @@ test("the first essay is published and linked from home and nav", async ({ page 
   await page.getByRole("link", { name: "The prototype was too small" }).first().click();
   await expect(page.locator("h1")).toHaveText("The prototype was too small");
   await expect(page.locator("body")).not.toContainText("Draft for review");
+});
+
+test("photography: gallery loads and the viewer opens, steps and closes", async ({ page }) => {
+  await page.goto("/life/photography");
+  await expect(page.locator("[data-gallery] figure")).toHaveCount(12);
+  await page.locator("[data-gallery] a").first().click();
+  const viewer = page.locator("[data-viewer]");
+  await expect(viewer).toBeVisible();
+  await expect(viewer.locator("[data-v-count]")).toHaveText("1 / 12");
+  await page.keyboard.press("ArrowRight");
+  await expect(viewer.locator("[data-v-count]")).toHaveText("2 / 12");
+  await page.keyboard.press("Escape");
+  await expect(viewer).toBeHidden();
 });
 
 test("share cards exist for every page", async ({ page }) => {

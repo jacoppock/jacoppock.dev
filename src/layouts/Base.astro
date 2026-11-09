@@ -7,9 +7,10 @@ import { SHOW_UNFINISHED } from "../lib/env";
 import { getCollection } from "astro:content";
 const hasWriting = (await getCollection("writing")).some((e) => SHOW_UNFINISHED || e.data.status !== "draft");
 
-interface Props { title?: string; description?: string }
+interface Props { title?: string; description?: string; theme?: "light" | "dark" }
 const {
   title,
+  theme,
   description = "James Coppock is an applied ML scientist who builds systems that turn messy healthcare signals, from heartbeats and MRIs to payer contracts, into decisions people can trust.",
 } = Astro.props;
 const fullTitle = title ? `${title} | James Coppock` : "James Coppock, applied ML scientist";
@@ -30,7 +31,7 @@ const person = {
 };
 ---
 <!doctype html>
-<html lang="en" data-env={SHOW_UNFINISHED ? "dev" : "prod"}>
+<html lang="en" data-env={SHOW_UNFINISHED ? "dev" : "prod"} data-theme={theme}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

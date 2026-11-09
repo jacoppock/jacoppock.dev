@@ -19,16 +19,6 @@ const work = defineCollection({
   }),
 });
 
-const photos = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./src/content/photos" }),
-  schema: z.object({
-    title: z.string(),
-    image: z.string(),
-    story: z.string(),
-    placeholder: z.boolean().default(false),
-  }),
-});
-
 const writing = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/writing" }),
   schema: z.object({
@@ -39,4 +29,4 @@ const writing = defineCollection({
   }),
 });
 
-export const collections = { work, photos, writing };
+export const collections = { work, writing };

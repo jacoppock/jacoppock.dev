@@ -3,14 +3,31 @@ import Base from "../layouts/Base.astro";
 import NightChart from "../components/NightChart.astro";
 import night from "../data/featured-night.json";
 import pubs from "../data/publications.json";
+import photos from "../data/photos-africa.json";
+import training from "../data/training.json";
+const zebras = photos[0];
 import { getCollection } from "astro:content";
 import { SHOW_UNFINISHED } from "../lib/env";
 const essays = (await getCollection("writing")).filter((e) => SHOW_UNFINISHED || e.data.status !== "draft")
   .sort((a, b) => b.data.date.localeCompare(a.data.date));
 ---
 <Base>
-  <h1 class="hero-title">I lead applied AI teams that turn messy healthcare signals into decisions people can trust.</h1>
-  <p class="role">Manager, AI/ML Applied Science at <b>Infinia ML</b>. I lead the teams behind ContractIQ and Pricing &amp; Scoring.</p>
+  <section class="hero wide" aria-labelledby="hi">
+    <div class="hero-text">
+      <h1 id="hi" class="hello">Hi, I'm James.</h1>
+      <p class="hero-title">I lead applied AI teams that turn messy healthcare signals into decisions people can trust.</p>
+      <p class="intro">I'm Manager of AI/ML Applied Science at <b>Infinia ML</b>, where my team builds ContractIQ and Pricing &amp; Scoring. Before that I built a health platform at Bionic Health and did a PhD in Biomedical Engineering at Duke. I live in Durham with my wife, in a century home we restored. I photograph wildlife, I lift, and we've had Carolina Hurricanes season tickets for four seasons.</p>
+      <p class="hero-links"><a class="button" href="/about">More about me</a> <a class="button" href="/work">See the work</a> <a href="/contact">Get in touch</a></p>
+    </div>
+    <figure class="portrait">
+      <picture>
+        <source type="image/avif" srcset="/images/portrait/james-480.avif 480w, /images/portrait/james-800.avif 800w" sizes="(min-width: 64rem) 24rem, 80vw" />
+        <source type="image/webp" srcset="/images/portrait/james-480.webp 480w, /images/portrait/james-800.webp 800w" sizes="(min-width: 64rem) 24rem, 80vw" />
+        <img src="/images/portrait/james-800.jpg" width="800" height="1000" alt="James Coppock smiling in a pink knit hat and purple rain jacket, with a waterfall and rocky stream behind him." fetchpriority="high" />
+      </picture>
+    </figure>
+  </section>
+
   <dl class="creds">
     <div><dt>Trained as</dt><dd>PhD, Biomedical Engineering, Duke</dd></div>
     <div><dt>Published</dt><dd>{pubs.length} peer-reviewed papers, 1 US patent</dd></div>
@@ -18,10 +35,11 @@ const essays = (await getCollection("writing")).filter((e) => SHOW_UNFINISHED ||
     {SHOW_UNFINISHED && <div><dt>Impact</dt><dd class="tk">[TK: one approved number, e.g. contracts modeled or team size]</dd></div>}
   </dl>
 
+  <h2 class="section-h">A night in my signals</h2>
   <NightChart night={night} animate />
 
   <p class="lede">That's my heart, asleep. Somewhere between the ring on my finger and this chart, a noisy flicker of light became a heart rate you can read. I've spent my career on that kind of step, from heartbeats and spine MRIs to the payer contracts that decide what care is paid.</p>
-  <p>Today that means leading the applied-science team at Infinia ML, the AI arm of Aspirion, where we turn dense payer contracts into reimbursement logic people can audit. Before that I led Data Science &amp; AI at Bionic Health, and did a PhD in Biomedical Engineering at Duke. <a href="/lab/pulse">See how the heartbeat gets out of the noise</a>.</p>
+  <p>Today that means leading the applied-science team at Infinia ML, the AI arm of Aspirion, where we turn dense payer contracts into reimbursement logic people can audit. <a href="/lab/pulse">See how the heartbeat gets out of the noise</a>.</p>
 
   <h2>Four signals</h2>
 
@@ -61,17 +79,56 @@ const essays = (await getCollection("writing")).filter((e) => SHOW_UNFINISHED ||
     </>
   )}
 
+  <h2>Off the clock</h2>
+  <div class="life wide">
+    <a class="card" href="/life/restoration">
+      <picture><source type="image/webp" srcset="/images/restoration/after-800.webp" /><img src="/images/restoration/after-800.jpg" alt="" width="800" height="600" loading="lazy" /></picture>
+      <span><b>Restoring a century home</b> Recognized by the Durham Historic Preservation Commission</span>
+    </a>
+    <a class="card" href="/life/photography">
+      <picture><source type="image/avif" srcset={`/photos/africa/${zebras.slug}-640.avif`} /><source type="image/webp" srcset={`/photos/africa/${zebras.slug}-640.webp`} /><img src={`/photos/africa/${zebras.slug}-1280.jpg`} alt="" width="640" height="427" loading="lazy" /></picture>
+      <span><b>Photography</b> Wildlife from a trip to Africa</span>
+    </a>
+    <a class="card stat" href="/life/training">
+      <span class="big">{(training.totalVolume / 1e6).toFixed(2)}M</span>
+      <span><b>Training</b> Pounds lifted in {training.weekly.length} weeks, logged set by set</span>
+    </a>
+    <a class="card stat" href="/life/hockey">
+      <span class="big">2026</span>
+      <span><b>Hockey</b> Section 113, Stanley Cup champions</span>
+    </a>
+  </div>
+
   <p class="next"><a href="/work">Read the case studies</a>, grab the <a href="/cv">CV</a>, or <a href="/contact">get in touch</a>.</p>
 </Base>
 
 <style>
-  .hero-title { max-width: 25ch; margin-top: 0.25rem; margin-bottom: 0.4em; font-size: clamp(2rem, 1.1rem + 2.7vw, 3.05rem); }
-  .role { font-size: var(--step-1); margin-bottom: 1rem; }
-  .role b { font-weight: 750; }
+  .hero { display: grid; gap: 1.5rem 3rem; align-items: center; margin: 0.5rem 0 2rem; }
+  .hello { font-size: clamp(2.6rem, 1.5rem + 4.4vw, 4.6rem); letter-spacing: -0.04em; margin: 0 0 0.25em; }
+  .hero-title { font-size: clamp(1.35rem, 1.05rem + 1.1vw, 1.85rem); font-weight: 750; line-height: 1.2; letter-spacing: -0.02em; max-width: 30ch; margin: 0 0 0.9rem; text-wrap: balance; }
+  .intro { font-size: var(--step-0); line-height: 1.65; max-width: 36rem; }
+  .intro b { font-weight: 750; }
+  .hero-links { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; margin-top: 1.25rem; }
+  .button { text-decoration: none; }
+  .portrait { margin: 0; justify-self: center; width: min(100%, 22rem); }
+  .portrait img { display: block; width: 100%; height: auto; border: 1.5px solid var(--ink); box-shadow: 10px 10px 0 var(--pen); }
+  @media (min-width: 52rem) {
+    .hero { grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.9fr); }
+  }
+  @media (max-width: 51.99rem) { .portrait { order: -1; width: min(70%, 18rem); justify-self: start; } }
+  .section-h { margin-top: 1rem; }
+  .life { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+  .card { display: grid; grid-template-rows: auto 1fr; text-decoration: none; border: 1.5px solid var(--ink); background: var(--paper-deep); color: var(--ink); overflow: hidden; }
+  .card img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.5s cubic-bezier(.2,.7,.2,1); }
+  .card:hover img { transform: scale(1.03); }
+  .card > span:last-child { display: grid; gap: 0.15rem; padding: 0.75rem 0.9rem 0.9rem; font-size: var(--step--1); color: var(--ink-soft); }
+  .card b { color: var(--ink); font-size: var(--step-0); }
+  .card:hover b { color: var(--pen); }
+  .stat .big { display: grid; place-items: center; aspect-ratio: 4 / 3; font-size: clamp(2.4rem, 1.6rem + 2vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; color: var(--pen); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 20px 20px; }
   .creds { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; margin: 0 0 1.75rem; padding-top: 0.9rem; border-top: 1.5px solid var(--ink); }
   .creds dt { font-size: var(--step--1); color: var(--ink-soft); }
   .creds dd { margin: 0; font-weight: 700; font-size: var(--step--1); }
-  @media (min-width: 64rem) { .creds { max-width: none; grid-column: 2 / -1; } }
+  @media (min-width: 64rem) { .creds { max-width: none; grid-column: 1 / -1; } }
   .lede { font-size: var(--step-1); line-height: 1.5; }
   .signal h3 { margin-top: 0; }
   .signal { margin-bottom: 1.5rem; }

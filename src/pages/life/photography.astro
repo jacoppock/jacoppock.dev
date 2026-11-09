@@ -1,18 +1,105 @@
 ---
-import { SHOW_UNFINISHED } from "../../lib/env";
 import Base from "../../layouts/Base.astro";
-import { getCollection } from "astro:content";
-const photos = await getCollection("photos");
+import photos from "../../data/photos-africa.json";
+
+type Photo = (typeof photos)[number];
+const src = (p: Photo, w: number, ext: string) => `/photos/africa/${p.slug}-${w}.${ext}`;
+const set = (p: Photo, ext: string) => [640, 1280, 2048].map((w) => `${src(p, w, ext)} ${w}w`).join(", ");
+const readout = (p: Photo) => p.settings
+  ? `${p.settings.focal} mm, f/${p.settings.f}, ${p.settings.shutter} s, ISO ${p.settings.iso}`
+  : "";
+// Layout rhythm on wide screens: a full-width frame, then pairs, then full width again.
+const FULL = new Set([0, 5, 10, 11]);
+const sizes = (i: number) => (FULL.has(i) ? "(min-width: 64rem) 68rem, 100vw" : "(min-width: 64rem) 34rem, 100vw");
 ---
-<Base title="Photography">
-  {SHOW_UNFINISHED ? (<>
-  <h1>Photography</h1>
-  <p>To add a photo, drop a file in <code>src/content/photos/</code>. Placeholders are marked until they're replaced.</p>
-  {photos.map((p) => (
-    <figure>
-      <img src={p.data.image} alt={p.data.placeholder ? `Placeholder image: ${p.data.title}` : p.data.title} width="1200" height="800" loading="lazy" style="max-width:100%;height:auto" />
-      <figcaption><strong>{p.data.title}</strong>{p.data.placeholder && <span class="tk"> [placeholder]</span>}: {p.data.story}</figcaption>
-    </figure>
-  ))}
-</>) : (<><h1>Photography</h1><p>Coming soon.</p></>)}
+<Base title="Photography" theme="dark" description="Wildlife photographs from a trip to Africa: lions, leopards, elephants, zebras and wild dogs.">
+  <div class="intro">
+    <h1>Photography</h1>
+    <p class="lede">Wildlife from a trip to Africa. Most of it was shot at 400 mm from a vehicle, waiting a long time for a few seconds of eye contact.</p>
+  </div>
+
+  <div class="gallery wide" data-gallery>
+    {photos.map((p, i) => (
+      <figure class:list={["shot", { full: FULL.has(i) }]} style={`--c:${p.color};background-image:url(${p.lqip})`}>
+        <a href={src(p, 2048, "webp")} data-i={i} aria-label={`Open ${p.title} full screen`}>
+          <picture>
+            <source type="image/avif" srcset={set(p, "avif")} sizes={sizes(i)} />
+            <source type="image/webp" srcset={set(p, "webp")} sizes={sizes(i)} />
+            <img src={src(p, 1280, "jpg")} alt={p.alt} width={p.width} height={p.height}
+              loading={i < 2 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : "auto"} decoding="async" />
+          </picture>
+        </a>
+        <figcaption><b>{p.title}</b>{p.settings && <span class="readout">{readout(p)}</span>}</figcaption>
+      </figure>
+    ))}
+  </div>
+
+  <dialog class="viewer" data-viewer aria-label="Photo viewer">
+    <img data-v-img alt="" />
+    <div class="v-bar">
+      <p><b data-v-title></b> <span class="readout" data-v-set></span></p>
+      <p class="v-nav">
+        <span class="readout" data-v-count></span>
+        <button type="button" data-v-prev aria-label="Previous photo">Previous</button>
+        <button type="button" data-v-next aria-label="Next photo">Next</button>
+        <button type="button" data-v-close aria-label="Close viewer">Close</button>
+      </p>
+    </div>
+  </dialog>
+  <script type="application/json" id="photo-data" set:html={JSON.stringify(photos.map((p) => ({ src: src(p, 2048, "webp"), alt: p.alt, title: p.title, set: readout(p) })))} />
 </Base>
+
+<style>
+  .intro { max-width: var(--measure); }
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+  .gallery { display: grid; grid-template-columns: 1fr; gap: 1.75rem 1.25rem; margin-top: 1rem; }
+  @media (min-width: 48rem) { .gallery { grid-template-columns: 1fr 1fr; } .shot.full { grid-column: 1 / -1; } }
+  .shot { margin: 0; background-size: cover; background-color: var(--c); }
+  .shot a { display: block; overflow: hidden; }
+  .shot img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; transition: transform 0.6s cubic-bezier(.2,.7,.2,1); }
+  .shot a:hover img { transform: scale(1.02); }
+  .shot figcaption { background: var(--paper); padding-top: 0.55rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.2rem 1rem; font-size: var(--step--1); color: var(--ink-soft); max-width: none; margin: 0; }
+  .shot figcaption b { color: var(--ink); font-weight: 700; }
+  .readout { font-family: var(--mono); font-size: 0.8rem; }
+
+  .viewer { border: 0; padding: 0; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; background: #0b0f13; color: #e7ece2; }
+  .viewer::backdrop { background: #0b0f13; }
+  .viewer[open] { display: grid; grid-template-rows: 1fr auto; }
+  .viewer img { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
+  .v-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.5rem 1.5rem; padding: 0.75rem 1.25rem 1rem; }
+  .v-bar p { margin: 0; }
+  .v-nav { display: flex; gap: 0.5rem; align-items: center; }
+  .v-nav .readout { margin-right: 0.5rem; color: #a7b2a2; }
+  .viewer button { color: #e7ece2; border-color: #e7ece2; }
+  .viewer button:hover { background: #e7ece2; color: #0b0f13; }
+</style>
+
+<script>
+  const data: { src: string; alt: string; title: string; set: string }[] = JSON.parse(document.getElementById("photo-data")!.textContent!);
+  const dlg = document.querySelector<HTMLDialogElement>("[data-viewer]")!;
+  const img = dlg.querySelector<HTMLImageElement>("[data-v-img]")!;
+  const q = (s: string) => dlg.querySelector<HTMLElement>(s)!;
+  let i = 0, opener: HTMLElement | null = null;
+  const show = (n: number) => {
+    i = (n + data.length) % data.length;
+    const d = data[i];
+    img.src = d.src; img.alt = d.alt;
+    q("[data-v-title]").textContent = d.title;
+    q("[data-v-set]").textContent = d.set;
+    q("[data-v-count]").textContent = `${i + 1} / ${data.length}`;
+    // Warm the next image so arrowing through feels instant.
+    const next = new Image(); next.src = data[(i + 1) % data.length].src;
+  };
+  document.querySelectorAll<HTMLAnchorElement>("[data-gallery] a[data-i]").forEach((a) => a.addEventListener("click", (e) => {
+    e.preventDefault(); opener = a; show(+a.dataset.i!); dlg.showModal();
+    (window as any).jtrack?.("photo-open");
+  }));
+  q("[data-v-prev]").addEventListener("click", () => show(i - 1));
+  q("[data-v-next]").addEventListener("click", () => show(i + 1));
+  q("[data-v-close]").addEventListener("click", () => dlg.close());
+  dlg.addEventListener("close", () => opener?.focus());
+  dlg.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") show(i + 1); if (e.key === "ArrowLeft") show(i - 1); });
+  let x0 = 0;
+  img.addEventListener("pointerdown", (e) => (x0 = e.clientX));
+  img.addEventListener("pointerup", (e) => { const dx = e.clientX - x0; if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1)); });
+</script>

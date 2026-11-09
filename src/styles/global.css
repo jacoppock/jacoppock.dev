@@ -142,3 +142,13 @@ label { font-size: var(--step--1); font-weight: 650; }
   @view-transition { navigation: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* Research figures expanded from Markdown by src/lib/rehype-figures.mjs */
+.research-fig { margin: 1.75rem 0 2.25rem; }
+.research-fig picture { display: block; background: #fff; border: 1.5px solid var(--ink); padding: 0.5rem; }
+.research-fig img { display: block; width: 100%; }
+.research-fig.is-draft picture { border-style: dashed; border-color: var(--pen); }
+@media (min-width: 64rem) {
+  .prose .research-fig.is-wide { margin-left: -15rem; width: calc(100% + 15rem); }
+  .prose .research-fig.is-wide figcaption { margin-left: 15rem; }
+}

@@ -1,0 +1,58 @@
+[
+ {
+  "slug": "duke-method",
+  "alt": "Diagram of the registration model. A disc image from before walking and one from after go into a neural network, which predicts a 3D deformation field. The field warps the before image onto the after image. Training balances how well the images match against how smooth the field is.",
+  "caption": "The registration model. A network learns a smooth, invertible deformation that carries each disc from its pre-walk shape to its post-walk shape. Strain comes from the gradient of that deformation.",
+  "widths": [
+   640,
+   1280,
+   2048
+  ],
+  "fallback": 1280,
+  "width": 2048,
+  "height": 766,
+  "wide": true
+ },
+ {
+  "slug": "duke-warp",
+  "alt": "One disc in side and top views before walking, after walking, and with the before image warped onto the after image. Below, 3D maps of the same disc show displacement, the Jacobian and the minimum principal strain. Most of the disc is blue, meaning it compressed, with orange patches near the rim.",
+  "caption": "One disc before walking (m), after 30 minutes on a treadmill (f), and the before image warped onto the after one (m∘φ). Bottom row: displacement (φ), volume change (J, below 1 means the tissue lost volume) and minimum principal strain (E<sub>min</sub>).",
+  "widths": [
+   640,
+   1280,
+   2048
+  ],
+  "fallback": 1280,
+  "width": 2048,
+  "height": 1443,
+  "wide": true
+ },
+ {
+  "slug": "duke-t2",
+  "alt": "Side view MRI of a lumbar spine with enlarged insets of each intervertebral disc, colored by T2 relaxation time. The bright center of each disc stands out against its darker rim.",
+  "caption": "T2 maps of each lumbar disc over a sagittal MRI. T2 relaxation time tracks the water content of the tissue.",
+  "widths": [
+   640,
+   1280,
+   1573
+  ],
+  "fallback": 1280,
+  "width": 1573,
+  "height": 1567
+ },
+ {
+  "slug": "duke-seg",
+  "alt": "Side view MRI of a lumbar spine with each disc outlined in magenta, a close-up of one outlined disc, and the stack of outlines that forms its 3D surface.",
+  "caption": "From MRI to a 3D disc: outline each disc slice by slice, then stack the outlines into a surface. The deep-learning models automate the outlining.",
+  "widths": [
+   640,
+   1280,
+   1752
+  ],
+  "fallback": 1280,
+  "width": 1752,
+  "height": 453,
+  "draft": true,
+  "wide": true
+ }
+]

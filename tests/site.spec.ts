@@ -37,10 +37,38 @@ test("unfinished placeholders never ship to production", async ({ page }) => {
     await expect(page.locator("body")).not.toContainText("[TK");
     await expect(page.locator("body")).not.toContainText("placeholder");
   }
-  for (const path of ["/lab/disc"]) {
-    await page.goto(path);
-    await expect(page.locator("main")).toContainText("Coming soon.");
+});
+
+test("the Disc exhibit is public and scrubs from before to after", async ({ page }) => {
+  await page.goto("/lab/disc", { waitUntil: "networkidle" });
+  await expect(page.locator("h1")).toHaveText("The Disc");
+  await expect(page.locator("main")).not.toContainText("Coming soon");
+  await expect(page.locator("[data-out=axial]")).toHaveText("0.00%");
+  await page.locator("#disc-t").fill("100");
+  await expect(page.locator("[data-out=stage]")).toHaveText("after 30 minutes");
+  await expect(page.locator("[data-out=axial]")).toHaveText("−2.27%");
+  await expect(page.locator("canvas[data-view=axial]")).toHaveAttribute("aria-label", /after 30 minutes/);
+  await page.getByRole("button", { name: "Show strain" }).click();
+  await expect(page.locator("[data-legend]")).toBeVisible();
+  // Linked from the lab index, the home page and the quick-jump index
+  await page.goto("/lab");
+  await expect(page.getByRole("link", { name: "The Disc" })).toBeVisible();
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: "The tissue" })).toHaveAttribute("href", "/lab/disc");
+  expect(await page.locator("#k-index").textContent()).toContain("/lab/disc");
+});
+
+test("Duke case study shows its research figures, and draft figures stay out of production", async ({ page }) => {
+  await page.goto("/work/duke-imaging", { waitUntil: "networkidle" });
+  const figs = page.locator("figure.research-fig");
+  await expect(figs).toHaveCount(3);
+  for (const img of await figs.locator("img").all()) {
+    await img.scrollIntoViewIfNeeded();
+    await expect(img).toHaveAttribute("alt", /.{40,}/);
+    expect(await img.evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth > 0)).toBe(true);
   }
+  await expect(page.locator("figure.is-draft")).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText("[Draft");
 });
 
 test("the camera is never requested until the visitor presses Start", async ({ page }) => {

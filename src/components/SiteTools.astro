@@ -6,11 +6,10 @@ import { isVisible } from "../lib/published";
 import { SHOW_UNFINISHED } from "../lib/env";
 import photos from "../data/photos-africa.json";
 
-const hidden = SHOW_UNFINISHED ? [] : ["/lab/disc"];
 const work = (await getCollection("work")).filter(isVisible);
 const essays = (await getCollection("writing")).filter((e) => SHOW_UNFINISHED || e.data.status !== "draft");
 const index = [
-  ...Object.entries(PAGES).filter(([href]) => !hidden.includes(href) && !href.startsWith("/writing/"))
+  ...Object.entries(PAGES).filter(([href]) => !href.startsWith("/writing/"))
     .map(([href, p]) => ({ href, title: p.title.length > 40 ? "Home" : p.title, hint: p.kicker, kind: "Page" })),
   ...work.map((w) => ({ href: `/work/${w.id}`, title: w.data.title, hint: `${w.data.org}, ${w.data.years}`, kind: "Case study" })),
   ...essays.map((e) => ({ href: `/writing/${e.id}`, title: e.data.title, hint: e.data.summary, kind: "Essay" })),

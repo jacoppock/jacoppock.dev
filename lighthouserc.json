@@ -7,7 +7,9 @@
         "/lab/pulse",
         "/life/training",
         "/life/restoration",
-        "/cv"
+        "/cv",
+        "/lab/disc",
+        "/work/duke-imaging"
       ],
       "numberOfRuns": 2,
       "settings": {

@@ -4,7 +4,7 @@ export const PAGES: Record<string, { title: string; kicker: string }> = {
   "/work": { title: "Work", kicker: "Case studies from wearables to payer contracts" },
   "/lab": { title: "Lab", kicker: "Small instruments you can poke at" },
   "/lab/pulse": { title: "From light to heartbeat", kicker: "An explorable built on my own wearable data" },
-  "/lab/disc": { title: "The Disc", kicker: "How a spinal disc deforms under load" },
+  "/lab/disc": { title: "The Disc", kicker: "One spinal disc, before and after a 30-minute walk" },
   "/research": { title: "Research", kicker: "Medical imaging, spine biomechanics, wearables" },
   "/writing": { title: "Writing", kicker: "Building ML for healthcare, and leading the teams that do it" },
   "/writing/the-prototype-was-too-small": { title: "The prototype was too small", kicker: "What building ContractIQ taught me about simple vs. small" },

@@ -1,13 +1,244 @@
 ---
-import { SHOW_UNFINISHED } from "../../lib/env";
 import Base from "../../layouts/Base.astro";
+import disc from "../../data/disc.json";
+
+const d = disc.disc;
+const pct = (v: number) => `${v < 0 ? "−" : "+"}${Math.abs(v).toFixed(2)}%`;
+
+// Population strip: whole-disc mean minimum principal strain for every disc in the study.
+const vals = disc.population.emin;
+const median = vals.length % 2 ? vals[(vals.length - 1) / 2] : (vals[vals.length / 2 - 1] + vals[vals.length / 2]) / 2;
+const lo = -14, hi = 0, W = 720, H = 160, padL = 8, padR = 8, base = 112, r = 3.2;
+const x = (v: number) => padL + ((v - lo) / (hi - lo)) * (W - padL - padR);
+const stacks = new Map<number, number>();
+const dots = vals.map((v) => {
+  const bin = Math.round(x(v) / (r * 2.1));
+  const k = stacks.get(bin) ?? 0; stacks.set(bin, k + 1);
+  return { cx: bin * r * 2.1, cy: base - r - k * r * 2.1 };
+});
+const ticks = [-14, -12, -10, -8, -6, -4, -2, 0];
+
+// Regional volume change, averaged over the four sectors of each ring.
+const R = disc.regions as Record<string, number>;
+const ring = (keys: string[]) => (keys.reduce((s, k) => s + R[k], 0) / keys.length - 1) * 100;
+const rings = [
+  { name: "Nucleus", v: (R["NP"] - 1) * 100 },
+  { name: "Inner annulus", v: ring(["Ant-TR", "LL-TR", "Post-TR", "RL-TR"]) },
+  { name: "Outer annulus", v: ring(["Ant-AF", "LL-AF", "Post-AF", "RL-AF"]) },
+];
+const barMax = 2.5;
 ---
-<Base title="The Disc" description="Watch a lumbar disc deform under load, from my Duke dissertation research.">
-  {SHOW_UNFINISHED ? (<>
+<Base title="The Disc" description="Scrub one lumbar disc from before to after 30 minutes of treadmill walking, using MRI and strain maps from my Duke research.">
   <h1>The Disc</h1>
-  <p><em>[Interactive, Phase 5]</em></p>
-  <p>Your spinal discs are water-filled cushions. Walk for half an hour and they compress measurably, then slowly recover when you lie down. With MRI and deep-learning segmentation we can measure that change automatically.</p>
-  <p><span class="tk">[slider: minutes of treadmill walking → disc height/shape · BMI slider · toggle model segmentation vs. ground truth]</span></p>
-  <p>Imagery: <span class="tk">[TK: rights-cleared figures, open dataset, or synthetic phantom]</span></p>
-</>) : (<><h1>The Disc</h1><p>Coming soon.</p></>)}
+  <p class="lede">The discs between your vertebrae are firm, water-rich cushions. Load them for half an hour and they lose a little height and volume, then recover when you lie down. This is one real disc, {d.level}, from my Duke study, scanned with MRI before and after 30 minutes of treadmill walking.</p>
+
+  <section class="wide well instrument" aria-labelledby="disc-h">
+    <div class="inset">
+      <h2 id="disc-h">One disc, before and after</h2>
+      <p class="small">Drag the slider. The grey image is the MRI signal inside the disc. The line is the disc's outline, and the dashed line is where it started.</p>
+    </div>
+    <div class="views">
+      <figure>
+        <canvas data-view="sagittal" width="490" height="280" role="img" aria-label="Side view of the disc before walking."></canvas>
+        <figcaption><b>Side view</b> <span class="dir"><span>Front</span><span>Back</span></span></figcaption>
+      </figure>
+      <figure>
+        <canvas data-view="axial" width="630" height="490" role="img" aria-label="Top view of the disc before walking."></canvas>
+        <figcaption><b>Top view</b> <span class="dir"><span>Left</span><span>Right</span></span> Front is up.</figcaption>
+      </figure>
+    </div>
+    <div class="controls inset">
+      <label for="disc-t">Walking: <span class="readout" data-out="stage">before</span></label>
+      <input id="disc-t" type="range" min="0" max="100" step="1" value="0" aria-describedby="disc-note" />
+      <div class="ends" aria-hidden="true"><span>Before</span><span>After 30 min</span></div>
+      <div class="buttons">
+        <button type="button" data-toggle="strain" aria-pressed="false">Show strain</button>
+      </div>
+      <dl class="readouts" aria-live="polite">
+        <div><dt>Height (axial strain)</dt><dd class="readout" data-out="axial">0.00%</dd></div>
+        <div><dt>Volume change</dt><dd class="readout" data-out="volume">0.00%</dd></div>
+        <div><dt>Compression (mean E<sub>min</sub>)</dt><dd class="readout" data-out="emin">0.00%</dd></div>
+      </dl>
+      <p class="legend" data-legend hidden><span class="ramp" aria-hidden="true"></span> Strain map: minimum principal strain, from 0% (no tint) to −10% or more (full red). Darker red means more compression.</p>
+      <p id="disc-note" class="small">The scans exist only at the two ends. In between, the page blends the two images, morphs one outline into the other and scales the measured strain, so the middle of the slider is an interpolation, not a measurement.</p>
+      <noscript><p>The slider needs JavaScript. After walking, this disc's height strain was {pct(d.axialStrain)}, its volume changed {pct(d.volumeChange)} and its mean minimum principal strain was {pct(d.emin)}.</p></noscript>
+    </div>
+  </section>
+
+  <h2>What to try</h2>
+  <ol>
+    <li>Drag from before to after and watch the solid outline pull away from the dashed one. The change is small: about {Math.abs(d.axialStrain).toFixed(1)}% of the disc's height, a fraction of a millimetre. That is why measuring it takes careful registration rather than a ruler.</li>
+    <li>Turn on the strain map. Compression is not uniform. Some regions squeeze much more than others, which a single height number hides.</li>
+  </ol>
+
+  <h2>Where this disc sits</h2>
+  <p>The same measurement for all {disc.population.n} discs in the analysis: five lumbar levels in each of {disc.population.pairs} before-and-after scan pairs. This disc, in red, is close to the middle.</p>
+  <figure class="pop">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Dot plot of mean minimum principal strain for ${vals.length} discs, from ${pct(vals[0])} to ${pct(vals[vals.length - 1])}, median ${pct(median)}. The disc above is ${pct(d.emin)}.`}>
+      {dots.map((p) => <circle cx={p.cx.toFixed(1)} cy={p.cy.toFixed(1)} r={r} class="dot" />)}
+      <line x1={x(d.emin)} x2={x(d.emin)} y1="18" y2={base} class="me-line" />
+      <circle cx={x(d.emin)} cy="18" r="5" class="me" />
+      <text x={x(d.emin) + 10} y="25" class="lbl">This disc</text>
+      <line x1={padL} x2={W - padR} y1={base + 2} y2={base + 2} class="axis" />
+      {ticks.map((t) => <g><line x1={x(t)} x2={x(t)} y1={base + 2} y2={base + 8} class="axis" /><text x={x(t)} y={base + 30} class="tick" text-anchor="middle">{t === 0 ? "0" : `−${Math.abs(t)}`}%</text></g>)}
+    </svg>
+    <figcaption>Whole-disc mean minimum principal strain after walking. More negative means more compression.</figcaption>
+  </figure>
+
+  <p>Where in the disc does the volume go? Averaged over every disc, the water-rich nucleus at the center lost the most, and the tough outer ring barely changed.</p>
+  <figure class="rings">
+    <dl>
+      {rings.map((g, i) => (
+        <div>
+          <dt>{g.name}</dt>
+          <dd><span class={i === 0 ? "bar np" : "bar"} style={`width: ${((Math.abs(g.v) / barMax) * 100).toFixed(1)}%`}></span><span class="readout">{pct(g.v)}</span></dd>
+        </div>
+      ))}
+    </dl>
+    <figcaption>Mean volume change (Jacobian − 1) by region across all {disc.population.n} discs.</figcaption>
+  </figure>
+
+  <h2>Methods</h2>
+  <p class="small">Participants walked on a treadmill for 30 minutes at a constant speed, with 3D T2-weighted (SPACE) MRI of the lumbar spine before and after. Each disc was segmented, and an unsupervised deep-learning registration model learned a smooth, invertible deformation from the pre-walk disc to the post-walk disc. Strain is computed from the gradient of that deformation (Green-Lagrange strain, 0.875 mm voxels, Gaussian smoothing as in the study). The readouts and population plots are the study's own whole-disc and regional values. The strain map is recomputed from the same deformation with the study code. Its disc average ({pct(d.recomputed.emin)}) differs slightly from the table ({pct(d.emin)}) because this page uses the outline from the raw scan. Only the disc itself is shown. No surrounding anatomy, participant codes or scan dates leave the lab's files. Papers are listed under <a href="/research">Research</a>, and the full story is in the <a href="/work/duke-imaging">case study</a>.</p>
+
+  <script type="application/json" id="disc-data" set:html={JSON.stringify({ disc: d, sagittal: disc.sagittal, axial: disc.axial })} />
 </Base>
+
+<style>
+  .lede { font-size: var(--step-1); line-height: 1.5; }
+  .instrument { padding: 1.5rem var(--gutter) 1.25rem; margin: 1.5rem 0 2.5rem; }
+  .views { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr); gap: 1.25rem; align-items: end; margin: 1rem 0 0.5rem; }
+  @media (max-width: 40rem) { .views { grid-template-columns: minmax(0, 1fr); } }
+  .views figure { margin: 0; }
+  canvas { display: block; width: 100%; height: auto; background: var(--paper); border: 1.5px solid var(--ink); }
+  .views figcaption { display: flex; flex-wrap: wrap; gap: 0.25rem 0.75rem; align-items: baseline; max-width: none; }
+  .dir { display: inline-flex; gap: 0.4rem; }
+  .dir span:first-child::after { content: " ↔"; }
+  .controls label { display: block; margin-top: 0.5rem; }
+  .ends { display: flex; justify-content: space-between; font-size: var(--step--1); color: var(--ink-soft); }
+  .buttons { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.9rem 0; }
+  .readouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 0.5rem 1rem; margin: 0.5rem 0; }
+  .readouts div { border-top: 1.5px solid var(--ink); padding-top: 0.35rem; }
+  .readouts dt { font-size: var(--step--1); color: var(--ink-soft); }
+  .readouts dd { margin: 0; font-size: var(--step-1); }
+  .legend { font-size: var(--step--1); }
+  .ramp { display: inline-block; width: 4.5rem; height: 0.8em; vertical-align: -0.05em; margin-right: 0.35rem; border: 1px solid var(--ink); background: linear-gradient(90deg, var(--paper), var(--pen)); }
+  .small { font-size: var(--step--1); }
+  .pop svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .rings dl { margin: 0.5rem 0; display: grid; gap: 0.55rem; }
+  .rings dl div { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); align-items: center; gap: 0.75rem; }
+  .rings dt { font-weight: 650; font-size: var(--step--1); }
+  .rings dd { margin: 0; display: flex; align-items: center; gap: 0.5rem; font-size: var(--step--1); }
+  .rings .bar { display: block; height: 1.3rem; }
+  .dot { fill: var(--ink-soft); opacity: 0.55; }
+  .me { fill: var(--pen); }
+  .me-line { stroke: var(--pen); stroke-width: 1.5; }
+  .axis { stroke: var(--ink); stroke-width: 1.2; }
+  .tick { font: 500 19px var(--mono); fill: var(--ink-soft); }
+  .lbl { font: 650 20px var(--font); fill: var(--ink); }
+  .bar { background: var(--ink-soft); }
+  .bar.np { background: var(--pen); }
+</style>
+
+<script>
+  type View = { w: number; h: number; pre: string; post: string; sdfPre: string; sdfPost: string; emin: string };
+  const data = JSON.parse(document.getElementById("disc-data")!.textContent!);
+  const bytes = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  const decode = (v: View) => ({
+    w: v.w, h: v.h,
+    pre: bytes(v.pre), post: bytes(v.post),
+    sdfPre: new Int8Array(bytes(v.sdfPre).buffer), sdfPost: new Int8Array(bytes(v.sdfPost).buffer),
+    emin: new Int8Array(bytes(v.emin).buffer),
+  });
+  const views = { sagittal: decode(data.sagittal), axial: decode(data.axial) };
+  const slider = document.getElementById("disc-t") as HTMLInputElement;
+  const state = { t: 0, strain: false };
+
+  const hex = (s: string) => { const m = s.trim().replace("#", ""); return [0, 2, 4].map((i) => parseInt(m.slice(i, i + 2), 16)); };
+  let colors: Record<string, number[]> = {};
+  const readColors = () => {
+    const cs = getComputedStyle(document.documentElement);
+    colors = Object.fromEntries(["--paper", "--ink", "--pen", "--graphite"].map((k) => [k, hex(cs.getPropertyValue(k))]));
+  };
+
+  // Marching squares on a signed-distance grid: returns line segments where it crosses zero.
+  function contour(f: (i: number, j: number) => number, w: number, h: number) {
+    const segs: number[][] = [];
+    const lerp = (a: number, b: number) => a / (a - b);
+    for (let j = 0; j < h - 1; j++) for (let i = 0; i < w - 1; i++) {
+      const a = f(i, j), b = f(i + 1, j), c = f(i + 1, j + 1), d = f(i, j + 1);
+      const pts: number[][] = [];
+      if ((a < 0) !== (b < 0)) pts.push([i + lerp(a, b), j]);
+      if ((b < 0) !== (c < 0)) pts.push([i + 1, j + lerp(b, c)]);
+      if ((c < 0) !== (d < 0)) pts.push([i + 1 - lerp(c, d), j + 1]);
+      if ((d < 0) !== (a < 0)) pts.push([i, j + 1 - lerp(d, a)]);
+      if (pts.length >= 2) segs.push([...pts[0], ...pts[1]]);
+      if (pts.length === 4) segs.push([...pts[2], ...pts[3]]);
+    }
+    return segs;
+  }
+
+  function draw(name: "sagittal" | "axial") {
+    const v = views[name];
+    const canvas = document.querySelector(`canvas[data-view=${name}]`) as HTMLCanvasElement;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const cssW = canvas.clientWidth || canvas.width;
+    const scale = (cssW * dpr) / v.w;
+    canvas.width = Math.round(v.w * scale); canvas.height = Math.round(v.h * scale);
+    const ctx = canvas.getContext("2d")!;
+    const { t } = state;
+    const paper = colors["--paper"], ink = colors["--ink"], pen = colors["--pen"];
+
+    const img = new ImageData(v.w, v.h);
+    for (let k = 0; k < v.w * v.h; k++) {
+      const s = Math.pow(((1 - t) * v.pre[k] + t * v.post[k]) / 255, 0.8);
+      let rgb = [0, 1, 2].map((c) => paper[c] + (ink[c] - paper[c]) * s);
+      if (state.strain && v.emin[k] !== 0) {
+        // Minimum principal strain is compressive almost everywhere: shade 0 to −10% in pen red.
+        const a = Math.min(Math.max(-(v.emin[k] / 10) * t, 0) / 10, 1) * 0.8;
+        rgb = rgb.map((x, c) => x + (pen[c] - x) * a);
+      }
+      img.data.set([rgb[0], rgb[1], rgb[2], 255], k * 4);
+    }
+    const off = new OffscreenCanvas(v.w, v.h);
+    off.getContext("2d")!.putImageData(img, 0, 0);
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(off, 0, 0, canvas.width, canvas.height);
+
+    const at = (a: Int8Array, i: number, j: number) => a[j * v.w + i] / 8;
+    const line = (segs: number[][], color: number[], width: number, dash: number[]) => {
+      ctx.strokeStyle = `rgb(${color.join(",")})`; ctx.lineWidth = width * dpr; ctx.setLineDash(dash.map((x) => x * dpr));
+      ctx.beginPath();
+      for (const [x1, y1, x2, y2] of segs) { ctx.moveTo((x1 + 0.5) * scale, (y1 + 0.5) * scale); ctx.lineTo((x2 + 0.5) * scale, (y2 + 0.5) * scale); }
+      ctx.stroke();
+    };
+    line(contour((i, j) => at(v.sdfPre, i, j), v.w, v.h), colors["--graphite"], 1.5, [4, 4]);
+    line(contour((i, j) => at(v.sdfPre, i, j) + t * (at(v.sdfPost, i, j) - at(v.sdfPre, i, j)), v.w, v.h), pen, 2.25, []);
+
+    const where = t === 0 ? "before walking" : t === 1 ? "after 30 minutes of walking" : `${Math.round(t * 100)}% of the way from before to after walking (interpolated)`;
+    canvas.setAttribute("aria-label", `${name === "sagittal" ? "Side" : "Top"} view of the disc ${where}${state.strain ? ", with the strain map shown" : ""}.`);
+  }
+
+  const fmt = (v: number) => `${v < 0 ? "−" : v > 0 ? "+" : ""}${Math.abs(v).toFixed(2)}%`;
+  function update() {
+    const t = state.t, d = data.disc;
+    (document.querySelector("[data-out=stage]") as HTMLElement).textContent = t === 0 ? "before" : t === 1 ? "after 30 minutes" : `${Math.round(t * 100)}% (interpolated)`;
+    (document.querySelector("[data-out=axial]") as HTMLElement).textContent = fmt(d.axialStrain * t);
+    (document.querySelector("[data-out=volume]") as HTMLElement).textContent = fmt(d.volumeChange * t);
+    (document.querySelector("[data-out=emin]") as HTMLElement).textContent = fmt(d.emin * t);
+    (document.querySelector("[data-legend]") as HTMLElement).hidden = !state.strain;
+    draw("sagittal"); draw("axial");
+  }
+
+  let raf = 0;
+  const schedule = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
+  slider.addEventListener("input", () => { state.t = Number(slider.value) / 100; schedule(); });
+  document.querySelectorAll<HTMLButtonElement>("[data-toggle]").forEach((b) => b.addEventListener("click", () => {
+    const key = b.dataset.toggle as "strain";
+    state[key] = !state[key]; b.setAttribute("aria-pressed", String(state[key])); schedule();
+  }));
+  new MutationObserver(() => { readColors(); schedule(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readColors(); schedule(); });
+  window.addEventListener("resize", schedule);
+  readColors(); update();
+</script>
